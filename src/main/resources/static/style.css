@@ -1,0 +1,100 @@
+/* style.css */
+
+#main-page-title {
+	text-align: center;
+}
+
+.tab-icon {
+	font-size: inherit;
+	padding: 0px 5px;
+}
+
+#main-page-tabs {
+	text-align: center;
+	list-style: none;
+	margin: 8px 0px 0px 0px;
+}
+
+#main-page-tabs li {
+	display: inline-block;
+	margin: 0 5px;
+	float: inherit;
+	font-weight: 600;
+}
+
+#main-page-tabs a {
+	padding: 0 20px;
+	line-height: 30px;
+	display: inline-block;
+}
+
+#main-page-tabs a:hover, #main-page-tabs a.active {
+	background: #f0f0f0;
+}
+
+#main-page-tabs a:visited {
+	color: blue;
+}
+
+#main-page {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+}
+
+#main-page-header {
+}
+
+#main-page-content {
+	flex-grow: 1;
+}
+
+#main-page-content > div:not(:first-child) {
+	display: none;
+}
+
+#main-page-footer {
+	text-align: center;
+	width: 100%;
+	margin-bottom: 2px;
+	height: min-content;
+}
+
+form {
+	border: solid 1px;
+	margin: 10px auto;
+	width: 50vw;
+	text-align: center;
+	padding: 3px;
+}
+
+.tagsinput-master-div {
+	height: min-content;
+	padding: 0px !important;
+	display: flex;
+}
+
+.tagsinput-tags-div {
+	width: max-content;
+	display: flex;
+	overflow: auto;
+}
+
+.tagsinput-input-div {
+	flex-grow: 1;
+	margin-left: 3px;
+}
+
+.tagsinput-tag {
+	padding: 2px;
+	width: max-content;
+}
+
+.tagsinput-tag-label {
+	margin: 0px !important;
+	padding-right: 2px;
+}
+
+.tagsinput-tag-btn {
+	color: red;
+}
