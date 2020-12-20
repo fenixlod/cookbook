@@ -3,27 +3,28 @@
 //------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------VARIABLES---------------------------------------------
 //{-----------------------------------------------------------------------------------------------------------
-var baseUrl = 'localhost:8080';
+var baseUrl = 'http://localhost:80';
 var apiPaths = {
 	recipes: '/recipes',
 	watchdogReport: '/report/watchdog/range'
 }
+var runnigTimeouts = {};
+var actionButtons = {};
 //}-----------------------------------------------------------------------------------------------------------
 //--------------------------------------------------------GENERAL---------------------------------------------
 //{-----------------------------------------------------------------------------------------------------------
-function clickSwitchMainTab(targetObj) {
-	var $target = targetObj;
-	if($target.is('i')) {
-		$target = $target.parent();
+function onClickMainTabButton(targetObj) {
+	if($(targetObj).is('i')) {
+		$(targetObj) = $(targetObj).parent();
 	}
-	var id = $target.data('content-id');
-
+	
+	var id = $(targetObj).data('content-id');
 	$('#main-page-tabs a').removeClass('active');
-	$target.addClass('active');
-	switchToMainTab(id);
+	$(targetObj).addClass('active');
+	switchMainTab(id);
 }
 
-function switchToMainTab(id) {
+function switchMainTab(id) {
 	$('#main-page-content > div').hide();
 	$('#main-page-content #' + id).show();
 	$('#operation-info').text('');
@@ -31,8 +32,8 @@ function switchToMainTab(id) {
 }
 
 function initializeMainTab(tabId) {
-	if(tabId == 'add-recipe-div') {
-	} else if(tabId == 'search-recipe-div') {
+	if(tabId == 'recipes-div') {
+		initializeSearchRecipePage();
 	} else if(tabId == 'recipe-randomizer-div') {
 	}
 }
@@ -41,7 +42,6 @@ function initializeMainTab(tabId) {
 //{-----------------------------------------------------------------------------------------------------------
 function callApiUrl(methodType, path, data, onSuccessCallback, onFailCallback) {
 	var ajaxRequest = {
-		path: getBasePath(path),
 		url: buildAPIPath(path),
 		success: onSuccessCallback,
 		error: generalFailCallback,
@@ -83,75 +83,413 @@ function generalFailCallback(jqXHR, textStatus, errorThrown) {
 		this.failCallback(responseData, jqXHR.status, textStatus);
 	}
 	
-	if(this.path != apiPaths.login) {
-		if(jqXHR.status == 401) {
-			reloadToLoginPage();
-		} else if(jqXHR.status == 403) {
-			setOperationStatus('Access denied. You do not have sufficient privileges!', 'red');
-		} else if(jqXHR.status == 502 || jqXHR.status == 0) {
-			setOperationStatus('Service is currently unavailable. Please try again later.', 'red');
-		}
-	} else {
-		if(jqXHR.status == 502 || jqXHR.status == 0) {
-			setLoginStatus('Service is currently unavailable. Please try again later.', 'red');
-		}
+	if(jqXHR.status == 502 || jqXHR.status == 0) {
+		setStatusMessage('Услугата не е достъпна в момента. Опитайте отново по-късно', 'red');
 	}
 }
 
 function buildAPIPath(path) {
 	if(Array.isArray(path))
-		return BaseUrls.api + path.join('/');
+		return baseUrl + path.join('/');
 	else
-		return BaseUrls.api + path;
-}
-
-function getBasePath(path) {
-	if(Array.isArray(path))
-		return path[0];
-	else
-		return path;
+		return baseUrl + path;
 }
 //}-----------------------------------------------------------------------------------------------------------
-//---------------------------------------------------------OTHER----------------------------------------------
+//--------------------------------------------------------STATUS----------------------------------------------
 //{-----------------------------------------------------------------------------------------------------------
-function setOperationStatus(message, color, identifier) {
-	setStatus('#operation-status', message, color, identifier);
-}
+function setStatusMessage(message, color, bindElement) {
+	var label = '#operation-status';
+	
+	if(typeof bindElement != 'undefined' && bindElement != null) {
+		var parenDiv = $(bindElement);
+		while(true) {
+			parenDiv = $(parenDiv).parent();
+			if(parenDiv.length < 1)
+				break;
+			
+			var statusDiv = parenDiv.find('.operation-status');
+			if(statusDiv.length > 0) {
+				label = statusDiv[0];
+				break;
+			}
+		}
+	}
 
-function setStatus(div, message, color, identifier) {
-	$(div).html(message);
-	$(div).css('color', color);
+	$(label).html(message);
+	$(label).css('color', color);
 	
 	if(color == 'blue') {
 		$('body').css('cursor', 'progress');
-		if(identifier)
-			setStatusIndicator(identifier,'working');
+		if(bindElement)
+			setStatusIndicator(bindElement,'working');
 	} else if(color == 'green') {
 		$('body').css('cursor', 'default');
-		if(identifier)
-			setStatusIndicator(identifier,'done');
+		if(bindElement)
+			setStatusIndicator(bindElement,'done');
 	} else if(color == 'red') {
 		$('body').css('cursor', 'default');
-		if(identifier)
-			setStatusIndicator(identifier,'fail');
+		if(bindElement)
+			setStatusIndicator(bindElement,'fail');
 	}
 }
 
-function addItemInTagsInputContainer(input) {
+function setStatusIndicator(object, state) {
+	var prepend = $(object).find('i.action-indicator');
+	if(prepend.length == 0)
+		return;
+	
+	if(state == 'working') {
+		prepend.attr('class','fa fa-spinner fa-spin fa-tab action-indicator');
+		if($(object).is('button')) {
+			$(object).removeClass('btn-primary btn-success btn-danger').addClass('btn-primary');
+			$(object).prop('disabled', true);
+			clearTimeout(runnigTimeouts[object]);
+		}
+	} else if(state == 'done') {
+		prepend.attr('class','fa fa-check fa-tab action-indicator');
+		if($(object).is('button')) {
+			$(object).removeClass('btn-primary btn-success btn-danger').addClass('btn-success');
+			$(object).prop('disabled', false);
+			runnigTimeouts[object] = setTimeout(setStatusIndicator, 5000, object, 'reset');
+		}
+	} else if(state == 'fail') {
+		prepend.attr('class','fa fa-times fa-tab action-indicator');
+		if($(object).is('button')) {
+			$(object).removeClass('btn-primary btn-success btn-danger').addClass('btn-danger');
+			$(object).prop('disabled', false);
+			runnigTimeouts[object] = setTimeout(setStatusIndicator, 5000, object, 'reset');
+		}
+	} else if('reset') {
+		prepend.attr('class','action-indicator');
+		if($(object).is('button')) {
+			$(object).removeClass('btn-primary btn-success btn-danger');
+			$(object).prop('disabled', false);
+			clearTimeout(runnigTimeouts[object]);
+		}
+	}
+}
+
+function setErrorStatusMessage(data, alternativeMessage, bindElement) {
+	var message = '';
+	if(data) {
+		message = data.message;
+	} else {
+		message = alternativeMessage;
+	}
+	setStatusMessage(message, 'red', bindElement);
+}
+//}-----------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------TAGS-----------------------------------------------
+//{-----------------------------------------------------------------------------------------------------------
+function onAddNewTagEvent(input) {
 	var newTag = $(input).val();
-	console.log('Tag to add = ' + newTag);
-	tagsDiv = $(input).parent().parent().find('.tagsinput-tags-div');
-	$(tagsDiv).append(
-		$('<span>').attr({'class': 'tagsinput-tag form-control form-control-sm'}).append([
-			$('<label>').attr({'class': 'tagsinput-tag-label'}).append(newTag),
-			$('<button>').attr({'class': 'btn btn-sm tagsinput-tag-btn fa fa-times'}).click(function () { removeItemFromTagsContainer(this);})
-		])
-	);
+	
+	if(newTag == '')
+		return;
+
+	var tagsDiv = $(input).parents('.tags-main-div').find('.tags-container');
+	addTag(newTag, tagsDiv);
 	$(input).val('');
 }
 
-function removeItemFromTagsContainer(button) {
-	$(button).parent().remove();
+function addTag(tag, container) {
+	$(container).append(
+		$('<span>').attr({'class': 'tag-body form-control form-control-sm'}).append([
+			$('<label>').attr({'class': 'tag-label'}).append(tag),
+			$('<button>').attr({'class': 'btn btn-sm tag-remove-btn fa fa-times'}).click(function () { onClickRemoveTagButton(this);})
+		])
+	);
 }
 
+function onClickRemoveTagButton(button) {
+	$(button).parent('.tag-body').remove();
+}
+
+function getTags(container) {
+	var tags = [];
+	$(container).find('label').each(function (i, element) {
+		tags.push($(element).text());
+	});
+	return tags;
+}
+//}-----------------------------------------------------------------------------------------------------------
+//--------------------------------------------------INGREDIENTS-----------------------------------------------
+//{-----------------------------------------------------------------------------------------------------------
+function onClickAddIngredientButton(button) {
+	var ingredientsDiv = $(button).parents().find('.ingredients-container-div');
+	$('#div-templates .ingredient-div').clone().appendTo(ingredientsDiv);
+	$(ingredientsDiv).scrollTop($(ingredientsDiv)[0].scrollHeight);
+}
+
+function onClickRemoveIngredientButton(button) {
+	$(button).parents('.ingredient-div').remove();
+}
+
+function addIngredient(ingredient, container) {
+	var clonedIngredientDiv = $('#div-templates .ingredient-div').clone();
+	$(clonedIngredientDiv).find('input.ingredient-name').val(ingredient.name);
+	$(clonedIngredientDiv).find('input.ingredient-amount').val(ingredient.amount);
+	$(clonedIngredientDiv).find('select.ingredient-unit').val(ingredient.unit);
+	$(clonedIngredientDiv).appendTo(container);
+}
+//}-----------------------------------------------------------------------------------------------------------
+//--------------------------------------------------VALIDATION------------------------------------------------
+//{-----------------------------------------------------------------------------------------------------------
+function validateForm(id) {
+	var form = $(id);
+	var isFormValid = true;
+	
+	form.find('[required]').each(function (i, element) {
+		if(!$(element).val()) {
+			setInvalidInput(element);
+			isFormValid = false;
+		} else {
+			clearInvalidInput(element);
+		}
+	});
+	
+	return isFormValid;
+}
+
+function setInvalidInput(id) {
+	$(id).addClass('is-invalid');
+}
+
+function clearInvalidInput(id) {
+	$(id).removeClass('is-invalid');
+}
+//}-----------------------------------------------------------------------------------------------------------
+//------------------------------------------------------RECIPE------------------------------------------------
+//{-----------------------------------------------------------------------------------------------------------
+function onClickAddNewRecipeButton() {
+	$('#recipe-dialog-title').text('Нова рецепта');
+	cleanRecipeForm();
+	$('#recipe-dialog-operation-status').text('');
+	$('#insert-recipe-btn').show();
+	$('#save-recipe-btn').hide();
+	$('#recipe-dialog').modal({'backdrop': 'static'});
+}
+
+function onClickInsertRecipeButton() {
+	if(!validateForm('#recipe-form')) {
+		setStatusMessage('Моля попълнете празните полета', 'red', '#insert-recipe-btn');
+		return;
+	}
+	
+	var recipe = getRecipeData();
+	setStatusMessage('Добавяне на нова рецепта.....', 'blue', '#insert-recipe-btn');
+	callApiUrl('POST', apiPaths.recipes, recipe, insertRecipeSuccess, insertRecipeFail);
+}
+
+function getRecipeData() {
+	return {
+		name: $('#recipe-name').val(),
+		description: $('#recipe-description').val(),
+		preparation: $('#recipe-preparation').val(),
+		tags: getTags('#recipe-tags'),
+		ingredients: getRecipeIngredients('#recipe-ingredients')
+	};
+}
+
+function getRecipeIngredients(container) {
+	var ingredients = [];
+	$(container).find('.ingredient-div').each(function (i, div) {
+		var ingredient = {
+			name: $(div).find('input.ingredient-name').val(),
+			amount: $(div).find('input.ingredient-amount').val(),
+			unit: $(div).find('select.ingredient-unit').val()
+		};
+		ingredients.push(ingredient);
+	});
+	return ingredients;
+}
+
+function insertRecipeSuccess(data) {
+	setStatusMessage('Рецептата добавена успешно', 'green', '#insert-recipe-btn');
+	cleanRecipeForm();
+}
+
+function insertRecipeFail(data) {
+	setErrorStatusMessage(data, 'Грешка при опита да се добави нова рецепта', '#insert-recipe-btn');
+}
+
+function cleanRecipeForm() {
+	$('#recipe-name').val('');
+	$('#recipe-description').val('');
+	$('#recipe-preparation').val('');
+	$('#recipe-tags').empty();
+	$('#recipe-ingredients').empty();
+	$('#recipe-tags-input').val('');
+}
+
+function addSearchRecipeResultTableStyling() {
+	var table = 'search-recipe-result-table';
+	var filterDiv = $('#div-templates #data-table-search-div').clone().prepend($('#' + table +'_filter input'));
+	$('#' + table +'_filter').empty();
+	$('#' + table +'_filter').append($(filterDiv));
+	$('#' + table +'_filter input').addClass('form-control');
+}
+
+function initializeSearchRecipePage() {
+	searchRecipes();
+}
+
+function searchRecipes() {
+	var filters = {
+	};
+
+	setStatusMessage('Търсене.....', 'blue');
+	callApiUrl('GET', apiPaths.recipes, filters, searchRecipesSuccess, searchRecipesFail);
+}
+
+function searchRecipesSuccess(data) {
+	setStatusMessage('Търсенето успешно', 'green');
+	var table = $('#search-recipe-result-table').DataTable();
+	table.clear();
+	
+	data.forEach(function(recipe) {
+		table.row.add(
+			$('<tr>').append([
+				$('<td>').append(recipe.id),
+				$('<td>').attr({'class': 'minimum-cell'}).append(recipe.name),
+				$('<td>').html(buildRecipeDescription(recipe.description)),
+				$('<td>').append(recipeTagsToString(recipe.tags)),
+				$('<td>').append(recipeIngredientsToString(recipe.ingredients)),
+				$('<td>').append(buildRecipeActionsBar(recipe))
+			])
+		);
+	});
+	
+	table.order([]);
+	table.draw();
+}
+
+function searchRecipesFail(data) {
+	setErrorStatusMessage(data, 'Възникна грешка при търсенето на рецепти');
+}
+
+function buildRecipeActionsBar(recipe) {
+	return $('<div>').attr({'class': 'btn-group btn-group-actions', 'role': 'group', 'style': 'visibility:hidden'}).append([
+				$('<button>').attr({'id': recipe.id + '-view','data-recipe-id': recipe.id, 'type' : 'button', 'class': 'btn btn-blue', 'title': 'Виж подробно'}).append([
+					$('<i>').attr({'class': 'fa fa-eye'})
+				]).click(function () { viewRecipeButtonClicked(this);} ),
+				$('<button>').attr({'id': recipe.id + '-edit','data-recipe-id': recipe.id, 'type' : 'button', 'class': 'btn btn-green', 'title': 'Редактирай'}).append([
+					$('<i>').attr({'class': 'fa fa-pencil'})
+				]).click(function () { onClickEditRecipeButton(this);} ),
+				$('<button>').attr({'id': recipe.id + '-delete','data-recipe-id': recipe.id, 'type' : 'button', 'class': 'btn btn-red', 'title': 'Изтрий'}).append([
+					$('<i>').attr({'class': 'fa fa-trash'})
+				]).click(function () { onClickDeleteRecipeButton(this);} )
+			]);
+}
+
+function buildRecipeDescription(description) {
+	if(description.length < 100) {
+		return $('<span>').append(description);
+	} else {
+		var shortDesc = description.substring(0,100) + '...';
+		return $('<span>').attr({'title': description, 'class' : 'info-word'}).append(shortDesc);
+	}
+}
+
+function recipeTagsToString(tags) {
+	return tags.join(', ')
+}
+
+function recipeIngredientsToString(ingredients) {
+	var ingredientNames = [];
+	ingredients.forEach(function(ingredient) {
+		ingredientNames.push(ingredient.name);
+	});
+	return ingredientNames.join(', ');
+}
+
+function onClickDeleteRecipeButton(button) {
+	var id = $(button).data('recipe-id');
+	var name = $($(button).parents('tr').find('td')[0]).text();
+	actionButtons['recipe-delete'] = '#' + $(button).attr('id');
+	$('#confirm-recipe-delete-dialog-name').text(name);
+	$('#confirm-recipe-delete-dialog-ok').data('recipe-id', id);
+	$('#confirm-recipe-delete-dialog').modal();
+}
+
+function onClickConfirmDeleteRecipeButton(id) {
+	setStatusMessage('Изтриване на рецепта.....', 'blue', actionButtons['recipe-delete']);
+	callApiUrl('DELETE', [ apiPaths.recipes, id ], null, deleteRecipeSuccess, deleteRecipeFail);
+}
+
+function deleteRecipeSuccess(data) {
+	setStatusMessage('Рецептата изтрита успешно', 'green', actionButtons['recipe-delete']);
+	actionButtons['recipe-delete'] = null;
+	searchRecipes();
+}
+
+function deleteRecipeFail(data) {
+	setErrorStatusMessage(data, 'Грешка при опита да се изтрие рецепта', actionButtons['recipe-delete']);
+	actionButtons['recipe-delete'] = null;
+}
+
+function onClickEditRecipeButton(button) {
+	var id = $(button).data('recipe-id');
+	var name = $($(button).parents('tr').find('td')[0]).text();
+	actionButtons['recipe-edit'] = '#' + $(button).attr('id');
+	setStatusMessage('Редактиране на рецепта: ' + name, 'blue', actionButtons['recipe-edit']);
+	callApiUrl('GET', [ apiPaths.recipes, id ], null, getRecipeSuccess, getRecipeFail);
+}
+
+function getRecipeSuccess(data) {
+	setStatusMessage('', 'green', actionButtons['recipe-edit']);
+	$('#recipe-dialog-title').text('Редактиране на рецепта');
+	cleanRecipeForm();
+	fillRecipeDialog(data);
+	$('#recipe-dialog-operation-status').text('');
+	$('#insert-recipe-btn').hide();
+	$('#save-recipe-btn').show();
+	$('#recipe-dialog').modal({'backdrop': 'static'});
+}
+
+function getRecipeFail(data) {
+	setErrorStatusMessage(data, 'Грешка при опита да се намери рецептата', actionButtons['recipe-edit']);
+	actionButtons['recipe-edit'] = null;
+}
+
+function fillRecipeDialog(recipe) {
+	$('#recipe-name').val(recipe.name);
+	$('#recipe-description').val(recipe.description);
+	$('#recipe-preparation').val(recipe.preparation);
+	
+	var tagDiv = $('#recipe-dialog').find('.tags-container');
+	recipe.tags.forEach(function(tag) {
+		addTag(tag, tagDiv);
+	});
+	
+	var ingredientDiv = $('#recipe-dialog').find('.ingredients-container-div');
+	recipe.ingredients.forEach(function(ingredient) {
+		addIngredient(ingredient, ingredientDiv);
+	});
+}
+
+function onClickSaveRecipeButton() {
+	if(!validateForm('#recipe-form')) {
+		setStatusMessage('Моля попълнете празните полета', 'red', '#save-recipe-btn');
+		return;
+	}
+	
+	var recipe = getRecipeData();
+	var recipeId = $(actionButtons['recipe-edit']).data('recipe-id');
+	setStatusMessage('Записване на промените.....', 'blue', '#save-recipe-btn');
+	callApiUrl('PUT', [ apiPaths.recipes, recipeId ], recipe, saveRecipeSuccess, saveRecipeFail);
+}
+
+
+function saveRecipeSuccess() {
+	setStatusMessage('Рецептата записана успешно', 'green', '#save-recipe-btn');
+	setStatusMessage('Рецептата записана успешно', 'green', actionButtons['recipe-edit']);
+	$('#recipe-dialog').modal('hide');
+	actionButtons['recipe-edit'] = null;
+	searchRecipes();
+}
+
+function saveRecipeFail(data) {
+	setErrorStatusMessage(data, 'Грешка при опита да се запишат промените', '#save-recipe-btn');
+}
 //}

@@ -1,4 +1,4 @@
-package org.lunix.cookbook.enums;
+package com.lunix.cookbook.enums;
 
 public enum IngredientAmountUnit {
 	COUNT, VOLUME, WEIGHT;

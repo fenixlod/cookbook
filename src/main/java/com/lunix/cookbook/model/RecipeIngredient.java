@@ -1,6 +1,6 @@
-package org.lunix.cookbook.model;
+package com.lunix.cookbook.model;
 
-import org.lunix.cookbook.enums.IngredientAmountUnit;
+import com.lunix.cookbook.enums.IngredientAmountUnit;
 
 public class RecipeIngredient {
 	private String name;

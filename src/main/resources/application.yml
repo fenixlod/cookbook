@@ -3,11 +3,15 @@ spring:
     active: local
 
 server:
-  port: 8080
-  
+  port: 80
+
 logging:
   level:
     org:
       springframework:
         test: INFO
         web: INFO
+
+database:
+  recipe:
+    store-file: "I:\\Java Projects\\MyProjects\\cookbook\\database\\recipe.json"

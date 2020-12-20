@@ -14,7 +14,7 @@ plugins {
 	id 'eclipse'
 }
 
-group = 'org.lunix'
+group = 'com.lunix'
 sourceCompatibility = '14'
 
 repositories {

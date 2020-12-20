@@ -6,6 +6,8 @@
 
 # Ignore Gradle build output directory
 build/
+bin/
+database/
 
 ### STS ###
 .apt_generated

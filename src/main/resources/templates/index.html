@@ -12,22 +12,52 @@
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.js"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.25/moment-timezone-with-data.js"></script>
-	<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 	<script type="text/javascript" src="https://cdn.datatables.net/select/1.3.0/js/dataTables.select.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
 	<script type="text/javascript" src="/scripts.js"></script>
-	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
 	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.3.0/css/select.dataTables.min.css">
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
 	<link rel="stylesheet" type="text/css" href="/style.css"/>
 	
 	<script>
-		console.log('Page loaded!');
 		$( document ).ready(function() {
+			switchMainTab('recipes-div');
+			
 			$('#main-page-tabs a').on('click', function(event) {
 				event.preventDefault();
-				clickSwitchMainTab($(event.target));
+				onClickMainTabButton($(event.target));
+			});
+			
+			$('#search-recipe-result-table').DataTable({
+				'columnDefs': [
+					{ 'orderable': false, 'targets': [0, 2, 3, 4, 5 ] },
+					{ 'visible': false, 'searchable': false, 'targets': [ 0 ] },
+					{ 'searchable': false, 'targets': [ 5 ] }
+				],
+				'order':[],
+				'scrollCollapse': true,
+				'autoWidth': false,
+				'initComplete': function( settings, json ) {
+					addSearchRecipeResultTableStyling();
+				},
+				'lengthChange': false,
+				'pageLength': 20,
+				'language': {
+					'paginate': {
+					  'previous': 'Предишна',
+					  'next': 'Следваща'
+					},
+					'zeroRecords': 'Няма открити резултати',
+					'info': 'Показват се от _START_ до _END_ от общо _TOTAL_ резултата',
+					'infoFiltered': '(филтрирани от _MAX_ общо резултата)',
+					'infoEmpty': 'Показват се 0 резултата',
+				  }
 			});
 		});
 	</script>
@@ -41,59 +71,176 @@
 			<div id="main-page-tabs-div">
 				<ul id="main-page-tabs" class="nav justify-content-center nav-tabs">
 					<li class="nav-item">
-						<a href data-content-id="add-recipe-div" class="nav-link active"><i class="fa fa-plus tab-icon" aria-hidden="true"></i>Добави рецепта</a>
+						<a href="" data-content-id="recipes-div" class="nav-link active"><i class="fa fa-file-text-o tab-icon"></i>Рецепти</a>
 					</li>
 					<li class="nav-item">
-						<a href data-content-id="search-recipe-div" class="nav-link"><i class="fa fa-search tab-icon"></i>Търси рецепта</a>
-					</li>
-					<li class="nav-item">
-						<a href data-content-id="create-menu-div" class="nav-link"><i class="fa fa-random tab-icon"></i>Направи меню</a>
+						<a href="" data-content-id="create-menu-div" class="nav-link"><i class="fa fa-random tab-icon"></i>Направи меню</a>
 					</li>
 				</ul>
 			</div>
 		</div>
 		<div id="main-page-content">
-			<div id="add-recipe-div">
-				<form id="add-recipe-form">
-					<div class="form-group row no-gutters">
-						<label for="recipe-name" class="col-sm-2 col-form-label">Име</label>
-						<div class="col-sm-10">
-							<input id="recipe-name" class="form-control form-control-sm"></input>
-						</div>
+			<div id="recipes-div">
+				<div id="recipes-card" class="">
+					<div id="add-recipe-btn-div">
+						<button id="add-recipe-btn" type="button" class="btn btn-lg" onclick="onClickAddNewRecipeButton()"><i class="fa fa-plus tab-icon"></i>Добави нова рецепта</button>
 					</div>
-					<div class="form-group row no-gutters">
-						<label for="recipe-description" class="col-sm-2 col-form-label">Описание</label>
-						<div class="col-sm-10">
-							<textarea id="recipe-description" class="form-control form-control-sm"></textarea>
-						</div>
-					</div>
-					<div class="form-group row no-gutters">
-						<label for="recipe-tags" class="col-sm-2 col-form-label">Тагове</label>
-						<div class="col-sm-10 form-control tagsinput-master-div">
-							<div class="tagsinput-tags-div">
-							</div>
-							<div class="tagsinput-input-div">
-								<input id="recipe-tags" class="form-control form-control-sm form-control-plaintext tagsinput-input"></input>
+					<div id="search-recipe-row" class="row no-gutters">
+						<div id="search-recipe-filters" class="col-md-3">
+							<div class="bordered">
+								<h4>Филтри</h4>
+								<hr class="solid">
 							</div>
 						</div>
+						<div id="search-recipe-result" class="col-md-9">
+							<div class="bordered">
+								<table id="search-recipe-result-table" class="table data-table">
+									<thead>
+										<tr>
+											<th>ID</th>
+											<th>Име</th>
+											<th>Описание</th>
+											<th>Тагове</th>
+											<th>Продукти</th>
+											<th>Действия</th>
+										</tr>
+									</thead>
+									<tbody>
+									</tbody>
+								</table>
+							</div>
+						</div>
 					</div>
-				</form>
-			</div>
-			<div id="search-recipe-div">
+				</div>
 			</div>
 			<div id="create-menu-div">
 			</div>
 		</div>
-		<div id="main-page-footer">
-			<div id="operation-status">Error message</div>
+		<div id="main-page-footer" class="page-footer">
+			<div id="operation-status" class="operation-status">Error message</div>
 		</div>
 	</div>
+	<div id="div-templates" style="display:none;">
+		<div class="row no-gutters ingredient-div">
+			<div class="col-sm-7">
+				<input class="form-control form-control-sm ingredient-name" placeholder="Име на продукта" required></input>
+				<div class="invalid-feedback">Моля попълнете името на продукта</div>
+			</div>
+			<div class="col-sm-2">
+				<input type="number" min="0" max="9999" step="0.01" class="form-control form-control-sm ingredient-amount" placeholder="Количество">
+			</div>
+			<div class="col-sm-2">
+				<select id="dms-report-type" class="form-control form-control-sm ingredient-unit">
+					<option value="COUNT">Брой</option>
+					<option value="VOLUME">Мил. лит</option>
+					<option value="WEIGHT">Грам</option>
+				</select>
+			</div>
+			<div class="col-sm-1">
+				<button type="button" class="btn btn-sm fa fa-times ingredient-remove-btn" onclick="onClickRemoveIngredientButton(this)" title="Премахни"></button>
+			</div>
+		</div>
+		<div id="data-table-search-div" class="input-group input-group-sm">
+			<div class="input-group-append">
+				<label class="input-group-text"><i class="fa fa-search fa-big-xl"></i></label>
+			</div>
+		</div>
+	</div>
+	<div id="modal-dialog-prompts">
+		<div class="modal fade" id="confirm-recipe-delete-dialog" tabindex="-1" role="dialog" aria-labelledby="confirm-recipe-delete-dialog-title" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered" role="document">
+				<div class="modal-content">
+					<i class="fa fa-exclamation-circle modal-dialog-warning-sign"></i>
+					<div class="modal-header">
+						<h4 class="modal-title" id="confirm-recipe-delete-dialog-title">
+							<span>Изтриване на рецепта:&nbsp;</span>
+							<span id="confirm-recipe-delete-dialog-name" class="modal-title-value"></span>
+						</h4>
+					</div>
+					<div class="modal-body">
+						<h3 class="modal-message confirm-delete-message">Сигурни ли сте?</h3>
+					</div>
+					<div class="modal-footer">
+						<button id="confirm-recipe-delete-dialog-cancel" type="button" class="btn btn-primary" data-dismiss="modal">Не</button>
+						<button id="confirm-recipe-delete-dialog-ok" type="button" class="btn btn-danger" data-dismiss="modal">Да</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal fade" id="recipe-dialog" tabindex="-1" role="dialog" aria-labelledby="recipe-dialog-title" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered modal-xlg" role="document">
+				<div class="modal-content">
+					<div class="modal-header modal-header-centered">
+						<h2 class="modal-title" id="recipe-dialog-title">Нова рецепта</h2>
+					</div>
+					<div class="modal-body">	
+						<div id="recipe-div">
+							<form id="recipe-form" class="card" novalidate>
+								<div class="form-group row no-gutters">
+									<label for="recipe-name" class="col-sm-2 col-form-label form-group-label">Име</label>
+									<div class="col-sm-10">
+										<input id="recipe-name" class="form-control form-control-sm" required></input>
+										<div class="invalid-feedback">Моля попълнете името на рецептата</div>
+									</div>
+								</div>
+								<div class="form-group row no-gutters">
+									<label for="recipe-description" class="col-sm-2 col-form-label">Описание</label>
+									<div class="col-sm-10">
+										<textarea id="recipe-description" rows="4" class="form-control form-control-sm"></textarea>
+									</div>
+								</div>
+								<div class="form-group row no-gutters">
+									<label for="recipe-tags-input" class="col-sm-2 col-form-label">Тагове</label>
+									<div class="col-sm-10 form-control tags-main-div">
+										<div id="recipe-tags" class="tags-container">
+										</div>
+										<div class="tags-input-div">
+											<input id="recipe-tags-input" class="form-control form-control-sm form-control-plaintext tags-input"></input>
+										</div>
+									</div>
+								</div>
+								<div class="form-group row no-gutters">
+									<label class="col-sm-2 col-form-label">Продукти</label>
+									<div class="col-sm-10">
+										<div id="recipe-ingredients" class="ingredients-container-div">
+										</div>
+										<div id="add-ingredient-div">
+											<button type="button" class="btn btn-sm ingredient-add-btn" onclick="onClickAddIngredientButton(this)">+ Добави продукт</button>
+										</div>
+									</div>
+								</div>
+								<div class="form-group row no-gutters">
+									<label for="recipe-preparation" class="col-sm-2 col-form-label">Приготвяне</label>
+									<div class="col-sm-10">
+										<textarea id="recipe-preparation" rows="4" class="form-control form-control-sm"></textarea>
+									</div>
+								</div>
+								<button id="insert-recipe-btn" type="button" class="btn btn-sm confirm-button" onclick="onClickInsertRecipeButton()"><i class="action-indicator"></i>Добави рецепта</button>
+								<button id="save-recipe-btn" type="button" class="btn btn-sm confirm-button" onclick="onClickSaveRecipeButton()"><i class="action-indicator"></i>Запиши промените</button>
+							</form>
+						</div>					
+					</div>
+					<div class="page-footer">
+						<div id="recipe-dialog-operation-status" class="operation-status"></div>
+					</div>	
+					<div class="modal-footer">
+						<button id="recipe-dialog-close" type="button" class="btn btn-primary" data-dismiss="modal" onclick="searchRecipes()">Затвори</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
 	<script>
-		$('.tagsinput-input').keydown(function(event) {
+		$('.tags-input').keydown(function(event) {
 			if (event.keyCode === 13) {
 				event.preventDefault();
-				addItemInTagsInputContainer($(event.target));
+				onAddNewTagEvent($(event.target));
 			}
+		});
+		
+		$('#confirm-recipe-delete-dialog-ok').on('click',function(event){
+			onClickConfirmDeleteRecipeButton(($(event.target)).data('recipe-id'));
 		});
 	</script>
 </body>

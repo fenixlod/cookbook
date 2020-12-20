@@ -1,10 +1,10 @@
-package org.lunix.cookbook.boot;
+package com.lunix.cookbook.boot;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
-@ComponentScan("org.lunix.cookbook")
+@ComponentScan("com.lunix.cookbook")
 @SpringBootApplication
 public class WebCookbookApplication {
 	public static void main(String[] args) {
