@@ -262,12 +262,7 @@ function clearInvalidInput(id) {
 //------------------------------------------------------RECIPE------------------------------------------------
 //{-----------------------------------------------------------------------------------------------------------
 function onClickAddNewRecipeButton() {
-	$('#recipe-dialog-title').text('Нова рецепта');
-	cleanRecipeForm();
-	$('#recipe-dialog-operation-status').text('');
-	$('#insert-recipe-btn').show();
-	$('#save-recipe-btn').hide();
-	$('#recipe-dialog').modal({'backdrop': 'static'});
+	openRecipeDialog('NEW', null);
 }
 
 function onClickInsertRecipeButton() {
@@ -372,7 +367,7 @@ function buildRecipeActionsBar(recipe) {
 	return $('<div>').attr({'class': 'btn-group btn-group-actions', 'role': 'group', 'style': 'visibility:hidden'}).append([
 				$('<button>').attr({'id': recipe.id + '-view','data-recipe-id': recipe.id, 'type' : 'button', 'class': 'btn btn-blue', 'title': 'Виж подробно'}).append([
 					$('<i>').attr({'class': 'fa fa-eye'})
-				]).click(function () { viewRecipeButtonClicked(this);} ),
+				]).click(function () { onClickViewRecipeButton(this);} ),
 				$('<button>').attr({'id': recipe.id + '-edit','data-recipe-id': recipe.id, 'type' : 'button', 'class': 'btn btn-green', 'title': 'Редактирай'}).append([
 					$('<i>').attr({'class': 'fa fa-pencil'})
 				]).click(function () { onClickEditRecipeButton(this);} ),
@@ -438,13 +433,7 @@ function onClickEditRecipeButton(button) {
 
 function getRecipeSuccess(data) {
 	setStatusMessage('', 'green', actionButtons['recipe-edit']);
-	$('#recipe-dialog-title').text('Редактиране на рецепта');
-	cleanRecipeForm();
-	fillRecipeDialog(data);
-	$('#recipe-dialog-operation-status').text('');
-	$('#insert-recipe-btn').hide();
-	$('#save-recipe-btn').show();
-	$('#recipe-dialog').modal({'backdrop': 'static'});
+	openRecipeDialog('EDIT', data);
 }
 
 function getRecipeFail(data) {
@@ -492,4 +481,49 @@ function saveRecipeSuccess() {
 function saveRecipeFail(data) {
 	setErrorStatusMessage(data, 'Грешка при опита да се запишат промените', '#save-recipe-btn');
 }
+
+function onClickViewRecipeButton(button) {
+	var id = $(button).data('recipe-id');
+	var name = $($(button).parents('tr').find('td')[0]).text();
+	actionButtons['recipe-view'] = '#' + $(button).attr('id');
+	setStatusMessage('Преглед на рецепта: ' + name, 'blue', actionButtons['recipe-view']);
+	callApiUrl('GET', [ apiPaths.recipes, id ], null, getRecipeViewSuccess, getRecipeViewFail);
+}
+
+function getRecipeViewSuccess(data) {
+	setStatusMessage('', 'green', actionButtons['recipe-view']);
+	openRecipeDialog('VIEW', data);
+}
+
+function getRecipeViewFail(data) {
+	setErrorStatusMessage(data, 'Грешка при опита да се намери рецептата', actionButtons['recipe-view']);
+	actionButtons['recipe-view'] = null;
+}
+
+function openRecipeDialog(state, data) {
+	cleanRecipeForm();
+	$('#recipe-dialog-operation-status').text('');
+	var title = '';
+	if(state == 'NEW') {
+		title = 'Нова рецепта';
+		$('#insert-recipe-btn').show();
+		$('#save-recipe-btn').hide();
+		$('#recipe-dialog fieldset').removeAttr('disabled');
+	} else if(state == 'EDIT') {
+		title = 'Редактиране на рецепта';
+		fillRecipeDialog(data);
+		$('#insert-recipe-btn').hide();
+		$('#save-recipe-btn').show();
+		$('#recipe-dialog fieldset').removeAttr('disabled');
+	} else if(state == 'VIEW') {
+		title = 'Преглед на рецепта';
+		fillRecipeDialog(data);
+		$('#insert-recipe-btn').hide();
+		$('#save-recipe-btn').hide();
+		$('#recipe-dialog fieldset').attr('disabled','disabled');
+	}
+	$('#recipe-dialog-title').text(title);
+	$('#recipe-dialog').modal({'backdrop': 'static'});
+}
+
 //}

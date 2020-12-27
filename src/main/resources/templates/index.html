@@ -176,47 +176,49 @@
 					<div class="modal-body">	
 						<div id="recipe-div">
 							<form id="recipe-form" class="card" novalidate>
-								<div class="form-group row no-gutters">
-									<label for="recipe-name" class="col-sm-2 col-form-label form-group-label">Име</label>
-									<div class="col-sm-10">
-										<input id="recipe-name" class="form-control form-control-sm" required></input>
-										<div class="invalid-feedback">Моля попълнете името на рецептата</div>
-									</div>
-								</div>
-								<div class="form-group row no-gutters">
-									<label for="recipe-description" class="col-sm-2 col-form-label">Описание</label>
-									<div class="col-sm-10">
-										<textarea id="recipe-description" rows="4" class="form-control form-control-sm"></textarea>
-									</div>
-								</div>
-								<div class="form-group row no-gutters">
-									<label for="recipe-tags-input" class="col-sm-2 col-form-label">Тагове</label>
-									<div class="col-sm-10 form-control tags-main-div">
-										<div id="recipe-tags" class="tags-container">
-										</div>
-										<div class="tags-input-div">
-											<input id="recipe-tags-input" class="form-control form-control-sm form-control-plaintext tags-input"></input>
+								<fieldset>
+									<div class="form-group row no-gutters">
+										<label for="recipe-name" class="col-sm-2 col-form-label form-group-label">Име</label>
+										<div class="col-sm-10">
+											<input id="recipe-name" class="form-control form-control-sm" required></input>
+											<div class="invalid-feedback">Моля попълнете името на рецептата</div>
 										</div>
 									</div>
-								</div>
-								<div class="form-group row no-gutters">
-									<label class="col-sm-2 col-form-label">Продукти</label>
-									<div class="col-sm-10">
-										<div id="recipe-ingredients" class="ingredients-container-div">
-										</div>
-										<div id="add-ingredient-div">
-											<button type="button" class="btn btn-sm ingredient-add-btn" onclick="onClickAddIngredientButton(this)">+ Добави продукт</button>
+									<div class="form-group row no-gutters">
+										<label for="recipe-description" class="col-sm-2 col-form-label">Описание</label>
+										<div class="col-sm-10">
+											<textarea id="recipe-description" rows="4" class="form-control form-control-sm"></textarea>
 										</div>
 									</div>
-								</div>
-								<div class="form-group row no-gutters">
-									<label for="recipe-preparation" class="col-sm-2 col-form-label">Приготвяне</label>
-									<div class="col-sm-10">
-										<textarea id="recipe-preparation" rows="4" class="form-control form-control-sm"></textarea>
+									<div class="form-group row no-gutters">
+										<label for="recipe-tags-input" class="col-sm-2 col-form-label">Тагове</label>
+										<div class="col-sm-10 form-control tags-main-div">
+											<div id="recipe-tags" class="tags-container">
+											</div>
+											<div class="tags-input-div">
+												<input id="recipe-tags-input" class="form-control form-control-sm form-control-plaintext tags-input"></input>
+											</div>
+										</div>
 									</div>
-								</div>
-								<button id="insert-recipe-btn" type="button" class="btn btn-sm confirm-button" onclick="onClickInsertRecipeButton()"><i class="action-indicator"></i>Добави рецепта</button>
-								<button id="save-recipe-btn" type="button" class="btn btn-sm confirm-button" onclick="onClickSaveRecipeButton()"><i class="action-indicator"></i>Запиши промените</button>
+									<div class="form-group row no-gutters">
+										<label class="col-sm-2 col-form-label">Продукти</label>
+										<div class="col-sm-10">
+											<div id="recipe-ingredients" class="ingredients-container-div">
+											</div>
+											<div id="add-ingredient-div">
+												<button type="button" class="btn btn-sm ingredient-add-btn" onclick="onClickAddIngredientButton(this)">+ Добави продукт</button>
+											</div>
+										</div>
+									</div>
+									<div class="form-group row no-gutters">
+										<label for="recipe-preparation" class="col-sm-2 col-form-label">Приготвяне</label>
+										<div class="col-sm-10">
+											<textarea id="recipe-preparation" rows="4" class="form-control form-control-sm"></textarea>
+										</div>
+									</div>
+									<button id="insert-recipe-btn" type="button" class="btn btn-sm confirm-button" onclick="onClickInsertRecipeButton()"><i class="action-indicator"></i>Добави рецепта</button>
+									<button id="save-recipe-btn" type="button" class="btn btn-sm confirm-button" onclick="onClickSaveRecipeButton()"><i class="action-indicator"></i>Запиши промените</button>
+								</fieldset>
 							</form>
 						</div>					
 					</div>
