@@ -6,7 +6,7 @@
 	<meta http-equiv="Expires" content="0" />
 	<meta http-equiv="Pragma" content="no-cache" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Vera & Vladi cookbook</title>
+	<title>Готварска книжка</title>
 
 	<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
@@ -65,8 +65,11 @@
 <body>
 	<div id="main-page">
 		<div id="main-page-header">
-			<div id="main-page-title">
-				<h1>Страничката с рецепти на Вера и Влади :)</h1>
+			<div id="main-page-title-div">
+				<span id="nav-bar-brand-text" class="navbar-brand mr-0 mr-md-2">
+					<img id="navbar-logo" src="/Logo.png" class="d-inline-block" alt="" title="Lunix Games - Cookbook">
+				</span>
+				<h1 id="main-page-title">Книжката с рецепти на Вера и Влади<i class="fa fa-smile-o tab-icon"></i></h1>
 			</div>
 			<div id="main-page-tabs-div">
 				<ul id="main-page-tabs" class="nav justify-content-center nav-tabs">
@@ -86,13 +89,13 @@
 						<button id="add-recipe-btn" type="button" class="btn btn-lg" onclick="onClickAddNewRecipeButton()"><i class="fa fa-plus tab-icon"></i>Добави нова рецепта</button>
 					</div>
 					<div id="search-recipe-row" class="row no-gutters">
-						<div id="search-recipe-filters" class="col-md-3">
+						<div id="search-recipe-filters" class="col-md-2">
 							<div class="bordered">
 								<h4>Филтри</h4>
 								<hr class="solid">
 							</div>
 						</div>
-						<div id="search-recipe-result" class="col-md-9">
+						<div id="search-recipe-result" class="col-md-10">
 							<div class="bordered">
 								<table id="search-recipe-result-table" class="table data-table">
 									<thead>

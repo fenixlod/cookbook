@@ -15,7 +15,7 @@ var actionButtons = {};
 //{-----------------------------------------------------------------------------------------------------------
 function onClickMainTabButton(targetObj) {
 	if($(targetObj).is('i')) {
-		$(targetObj) = $(targetObj).parent();
+		targetObj = $(targetObj).parent();
 	}
 	
 	var id = $(targetObj).data('content-id');

@@ -1,7 +1,12 @@
 /* style.css */
 
+#main-page-title-div {
+	display: flex;
+}
+
 #main-page-title {
 	text-align: center;
+	width: 100%;
 }
 
 .tab-icon {
@@ -17,7 +22,7 @@
 
 #main-page-tabs li {
 	display: inline-block;
-	margin: 0 5px;
+	margin: 0 3px;
 	float: inherit;
 	font-weight: 600;
 }
@@ -153,7 +158,6 @@ form div label {
 
 #recipes-div {
 	display: flex;
-	width: 90vw;
 	margin: 0px auto;
 	height: 100%;
 }
@@ -283,8 +287,7 @@ hr {
 #add-recipe-btn-div {
 	text-align: center;
 	width: max-content;
-	margin: 0px auto;
-	padding: 5px 0px;
+	margin: 10px auto 5px auto;
 }
 
 #add-recipe-btn {
@@ -319,4 +322,14 @@ hr {
 .info-word {
 	border-bottom: 1px dotted black;
 	cursor: pointer;
+}
+
+#navbar-logo {
+	width: 45px;
+	height: 45px;
+}
+
+#nav-bar-brand-text {
+	font-weight: bold;
+	padding-left: .3125rem;
 }
