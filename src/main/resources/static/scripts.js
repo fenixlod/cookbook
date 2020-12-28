@@ -264,6 +264,29 @@ function setBtnToggleGroupState(button, nextState) {
 	var buttons = $(button).parent('.btn-group-toggle').find('.btn.filter-state');
 	$(buttons).attr('active','false');
 	$(buttons).filter('[state=' + nextState + ']').attr('active','true');
+	searchRecipes();
+}
+
+function onClickClearFiltersButton(button) {
+	var buttons = $(button).parent('.filter-category-div').find('.filter-category-body .btn.filter-state');
+	$(buttons).attr('active','false');
+	$(buttons).filter('[state=1]').attr('active','true');
+	searchRecipes();
+}
+
+function collectFiltersState(container) {
+	var includes = [], excludes = [];
+	$(container).find('.filter-category-body .filter-body').each(function(i, filter) {
+		var state = $(filter).find('button[active=true]').attr('state');
+		if(state != 1) {
+			var tagName = $(filter).find('.filter-name').text();
+			if(state == 2)
+				includes.push(tagName);
+			else if(state == 3)
+				excludes.push(tagName);
+		}
+	});
+	return { 'includes': includes, 'excludes': excludes };
 }
 //}-----------------------------------------------------------------------------------------------------------
 //------------------------------------------------------RECIPE------------------------------------------------
@@ -339,8 +362,9 @@ function addSearchRecipeResultTableStyling() {
 
 function searchRecipes() {
 	var filters = {
+		tags: collectFiltersState('#filters-tags'),
+		ingredients: collectFiltersState('#filters-ingredients')
 	};
-
 	setStatusMessage('Търсене.....', 'blue');
 	callApiUrl('GET', apiPaths.recipes, filters, searchRecipesSuccess, searchRecipesFail);
 }
@@ -545,6 +569,7 @@ function loadRecipeFiltersSuccess(data) {
 	
 	for (var filter in data){
 		var filterContainer = $('#filters-' + filter  + ' .filter-category-body');
+		$(filterContainer).empty();
 		for (var key in data[filter]){
 			addFilter(filterContainer, key, data[filter][key]);
 		}

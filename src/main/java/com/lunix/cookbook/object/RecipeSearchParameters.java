@@ -1,18 +1,25 @@
 package com.lunix.cookbook.object;
 
-import java.util.List;
-
-public class RecipeSearchFilter {
-	private List<String> tags;
+public class RecipeSearchParameters {
+	private Filters tags;
+	private Filters ingredients;
 	private Integer limit;
 	private Integer offset;
 
-	public List<String> getTags() {
+	public Filters getTags() {
 		return tags;
 	}
 
-	public void setTags(List<String> tags) {
+	public void setTags(Filters tags) {
 		this.tags = tags;
+	}
+
+	public Filters getIngredients() {
+		return ingredients;
+	}
+
+	public void setIngredients(Filters ingredients) {
+		this.ingredients = ingredients;
 	}
 
 	public Integer getLimit() {

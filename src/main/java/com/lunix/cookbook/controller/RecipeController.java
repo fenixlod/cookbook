@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lunix.cookbook.model.Recipe;
-import com.lunix.cookbook.object.RecipeSearchFilter;
+import com.lunix.cookbook.object.Filters;
+import com.lunix.cookbook.object.RecipeSearchParameters;
 import com.lunix.cookbook.service.RecipeService;
 
 @RestController
@@ -33,13 +34,21 @@ public class RecipeController {
 	}
 
 	@GetMapping("")
-	public ResponseEntity<?> listRecipes(@RequestParam(name = "tags", required = false) List<String> tagsFilter,
-			@RequestParam(name = "limit", required = false) Integer limit,
-			@RequestParam(name = "offset", required = false) Integer offset) {
-		RecipeSearchFilter filter = new RecipeSearchFilter();
+	public ResponseEntity<?> listRecipes2(@RequestParam(name = "tags[includes][]", required = false) List<String> tagsIncludesFilter,
+			@RequestParam(name = "tags[excludes][]", required = false) List<String> tagsExcludesFilter,
+			@RequestParam(name = "ingredients[includes][]", required = false) List<String> ingredientsIncludesFilter,
+			@RequestParam(name = "ingredients[excludes][]", required = false) List<String> ingredientsExcludesFilter,
+			@RequestParam(name = "limit", required = false) Integer limit, @RequestParam(name = "offset", required = false) Integer offset) {
+		RecipeSearchParameters filter = new RecipeSearchParameters();
 		filter.setLimit(limit);
 		filter.setOffset(offset);
-		filter.setTags(tagsFilter);
+		Filters tagFilters = new Filters(), ingredientsFilters = new Filters();
+		tagFilters.setIncludes(tagsIncludesFilter);
+		tagFilters.setExcludes(tagsExcludesFilter);
+		filter.setTags(tagFilters);
+		ingredientsFilters.setIncludes(ingredientsIncludesFilter);
+		ingredientsFilters.setExcludes(ingredientsExcludesFilter);
+		filter.setIngredients(ingredientsFilters);
 		return service.listRecipes(filter).get();
 	}
 

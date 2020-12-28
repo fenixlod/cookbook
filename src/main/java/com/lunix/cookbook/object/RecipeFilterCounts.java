@@ -2,7 +2,7 @@ package com.lunix.cookbook.object;
 
 import java.util.Map;
 
-public class RecipeFilters {
+public class RecipeFilterCounts {
 	private Map<String, Long> tags;
 	private Map<String, Long> ingredients;
 

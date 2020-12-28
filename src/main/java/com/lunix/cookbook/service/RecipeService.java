@@ -2,6 +2,8 @@ package com.lunix.cookbook.service;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -15,8 +17,8 @@ import org.springframework.util.StringUtils;
 import com.lunix.cookbook.dao.RecipeDao;
 import com.lunix.cookbook.enums.CommonMessages;
 import com.lunix.cookbook.model.Recipe;
-import com.lunix.cookbook.object.RecipeFilters;
-import com.lunix.cookbook.object.RecipeSearchFilter;
+import com.lunix.cookbook.object.RecipeFilterCounts;
+import com.lunix.cookbook.object.RecipeSearchParameters;
 import com.lunix.cookbook.utility.OperationResult;
 
 @Service
@@ -46,9 +48,9 @@ public class RecipeService {
 		}
 	}
 
-	public OperationResult listRecipes(RecipeSearchFilter searchFilter) {
+	public OperationResult listRecipes(RecipeSearchParameters searchParameters) {
 		try {
-			List<Recipe> foundRecipes = recipeDao.getRecipes(Optional.of(searchFilter));
+			List<Recipe> foundRecipes = recipeDao.getRecipes(Optional.of(searchParameters));
 			return OperationResult.ok(foundRecipes);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -118,17 +120,23 @@ public class RecipeService {
 
 	public OperationResult getRecipeFilters() {
 		try {
-			RecipeFilters recipeFilters = new RecipeFilters();
+			RecipeFilterCounts recipeFilters = new RecipeFilterCounts();
 			List<Recipe> allRecipes = recipeDao.getRecipes(Optional.empty());
 
 			Map<String, Long> tags = allRecipes.stream().map(r -> r.getTags()).flatMap(Collection::stream).map(t -> t.toLowerCase())
 					.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 
+			Map<String, Long> sortedTags = tags.entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+					.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+
 			Map<String, Long> ingredients = allRecipes.stream().map(r -> r.getIngredients()).flatMap(Collection::stream).map(i -> i.getName().toLowerCase())
 					.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 
-			recipeFilters.setTags(tags);
-			recipeFilters.setIngredients(ingredients);
+			Map<String, Long> sortedIngredients = ingredients.entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+					.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+
+			recipeFilters.setTags(sortedTags);
+			recipeFilters.setIngredients(sortedIngredients);
 			return OperationResult.ok(recipeFilters);
 		} catch (IOException e) {
 			e.printStackTrace();

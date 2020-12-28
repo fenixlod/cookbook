@@ -363,3 +363,19 @@ hr {
 .btn.filter-state[active=false] {
 	display: none;
 }
+
+.badge {
+	margin-left: 1px;
+	padding: .15em .25em !important;
+}
+
+.slim-btn {
+	padding: 2px 1px;
+	margin: 3px 3px;
+	border: 1px solid;
+}
+
+.filter-category-body {
+	padding-top: .75rem;
+	padding-bottom: .75rem;
+}
