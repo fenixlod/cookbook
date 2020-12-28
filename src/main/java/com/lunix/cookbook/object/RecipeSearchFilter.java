@@ -2,7 +2,7 @@ package com.lunix.cookbook.object;
 
 import java.util.List;
 
-public class RecipeFilter {
+public class RecipeSearchFilter {
 	private List<String> tags;
 	private Integer limit;
 	private Integer offset;

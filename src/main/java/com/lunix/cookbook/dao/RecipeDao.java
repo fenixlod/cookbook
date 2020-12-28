@@ -8,10 +8,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.lunix.cookbook.model.Recipe;
-import com.lunix.cookbook.object.RecipeFilter;
-import com.lunix.cookbook.repository.LocalJsonDatabase;
 import org.springframework.stereotype.Repository;
+
+import com.lunix.cookbook.model.Recipe;
+import com.lunix.cookbook.object.RecipeSearchFilter;
+import com.lunix.cookbook.repository.LocalJsonDatabase;
 
 @Repository
 public class RecipeDao {
@@ -63,7 +64,8 @@ public class RecipeDao {
 		save();
 	}
 
-	public List<Recipe> getRecipes(RecipeFilter filter) throws IOException {
+	public List<Recipe> getRecipes(Optional<RecipeSearchFilter> filter) throws IOException {
+		// TODO: Implement filtering
 		return new ArrayList<>(getRecipes().values());
 	}
 

@@ -5,8 +5,7 @@
 //{-----------------------------------------------------------------------------------------------------------
 var baseUrl = 'http://localhost:80';
 var apiPaths = {
-	recipes: '/recipes',
-	watchdogReport: '/report/watchdog/range'
+	recipes: '/recipes'
 }
 var runnigTimeouts = {};
 var actionButtons = {};
@@ -33,7 +32,7 @@ function switchMainTab(id) {
 
 function initializeMainTab(tabId) {
 	if(tabId == 'recipes-div') {
-		initializeSearchRecipePage();
+		initializeRecipePage();
 	} else if(tabId == 'recipe-randomizer-div') {
 	}
 }
@@ -259,8 +258,21 @@ function clearInvalidInput(id) {
 	$(id).removeClass('is-invalid');
 }
 //}-----------------------------------------------------------------------------------------------------------
+//------------------------------------------------------OTHER------------------------------------------------
+//{-----------------------------------------------------------------------------------------------------------
+function setBtnToggleGroupState(button, nextState) {
+	var buttons = $(button).parent('.btn-group-toggle').find('.btn.filter-state');
+	$(buttons).attr('active','false');
+	$(buttons).filter('[state=' + nextState + ']').attr('active','true');
+}
+//}-----------------------------------------------------------------------------------------------------------
 //------------------------------------------------------RECIPE------------------------------------------------
 //{-----------------------------------------------------------------------------------------------------------
+function initializeRecipePage() {
+	loadRecipeFilters();
+	searchRecipes();
+}
+
 function onClickAddNewRecipeButton() {
 	openRecipeDialog('NEW', null);
 }
@@ -323,10 +335,6 @@ function addSearchRecipeResultTableStyling() {
 	$('#' + table +'_filter').empty();
 	$('#' + table +'_filter').append($(filterDiv));
 	$('#' + table +'_filter input').addClass('form-control');
-}
-
-function initializeSearchRecipePage() {
-	searchRecipes();
 }
 
 function searchRecipes() {
@@ -526,4 +534,44 @@ function openRecipeDialog(state, data) {
 	$('#recipe-dialog').modal({'backdrop': 'static'});
 }
 
+
+function loadRecipeFilters() {
+	setStatusMessage('Зареждане на филтрите.....', 'blue');
+	callApiUrl('GET', [apiPaths.recipes, 'filters'], null, loadRecipeFiltersSuccess, loadRecipeFiltersFail);
+}
+
+function loadRecipeFiltersSuccess(data) {
+	setStatusMessage('Зареждане на филтрите успешно', 'green');
+	
+	for (var filter in data){
+		var filterContainer = $('#filters-' + filter  + ' .filter-category-body');
+		for (var key in data[filter]){
+			addFilter(filterContainer, key, data[filter][key]);
+		}
+	}
+}
+
+function loadRecipeFiltersFail(data) {
+	setErrorStatusMessage(data, 'Възникна грешка при зареждането на филтрите');
+}
+
+function addFilter(container, filterName, filterCount) {
+	$(container).append(
+		$('<div>').attr({'class' : 'filter-body'}).append([
+			$('<div>').attr({'class': 'btn-group-toggle', 'role': 'group'}).append([
+				$('<button>').attr({'type' : 'button', 'class': 'btn filter-state', 'active': 'true', 'state': 1}).append([
+					$('<i>').attr({'class': 'fa fa-square-o'})
+				]).click(function () { setBtnToggleGroupState(this, 2);} ),
+				$('<button>').attr({'type' : 'button', 'class': 'btn btn-green filter-state', 'active': 'false', 'state': 2}).append([
+					$('<i>').attr({'class': 'fa fa-check'})
+				]).click(function () { setBtnToggleGroupState(this, 3);} ),
+				$('<button>').attr({'type' : 'button', 'class': 'btn btn-red filter-state', 'active': 'false', 'state': 3}).append([
+					$('<i>').attr({'class': 'fa fa-ban'})
+				]).click(function () { setBtnToggleGroupState(this, 1);} ),
+			]),
+			$('<span>').attr({'class' : 'filter-name'}).append(filterName),
+			$('<span>').attr({'class' : 'filter-count badge badge-secondary'}).append(filterCount)
+		])
+	);
+}
 //}

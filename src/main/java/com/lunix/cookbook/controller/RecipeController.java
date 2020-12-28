@@ -2,9 +2,6 @@ package com.lunix.cookbook.controller;
 
 import java.util.List;
 
-import com.lunix.cookbook.model.Recipe;
-import com.lunix.cookbook.object.RecipeFilter;
-import com.lunix.cookbook.service.RecipeService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,6 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.lunix.cookbook.model.Recipe;
+import com.lunix.cookbook.object.RecipeSearchFilter;
+import com.lunix.cookbook.service.RecipeService;
 
 @RestController
 @RequestMapping(value = "/recipes", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -35,7 +36,7 @@ public class RecipeController {
 	public ResponseEntity<?> listRecipes(@RequestParam(name = "tags", required = false) List<String> tagsFilter,
 			@RequestParam(name = "limit", required = false) Integer limit,
 			@RequestParam(name = "offset", required = false) Integer offset) {
-		RecipeFilter filter = new RecipeFilter();
+		RecipeSearchFilter filter = new RecipeSearchFilter();
 		filter.setLimit(limit);
 		filter.setOffset(offset);
 		filter.setTags(tagsFilter);
@@ -58,4 +59,8 @@ public class RecipeController {
 		return service.deleteRecipe(recipeId).get();
 	}
 
+	@GetMapping("/filters")
+	public ResponseEntity<?> getRecipeFilters() {
+		return service.getRecipeFilters().get();
+	}
 }

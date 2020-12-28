@@ -1,17 +1,23 @@
 package com.lunix.cookbook.service;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.lunix.cookbook.dao.RecipeDao;
 import com.lunix.cookbook.enums.CommonMessages;
 import com.lunix.cookbook.model.Recipe;
-import com.lunix.cookbook.object.RecipeFilter;
+import com.lunix.cookbook.object.RecipeFilters;
+import com.lunix.cookbook.object.RecipeSearchFilter;
 import com.lunix.cookbook.utility.OperationResult;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 @Service
 public class RecipeService {
@@ -40,9 +46,9 @@ public class RecipeService {
 		}
 	}
 
-	public OperationResult listRecipes(RecipeFilter filter) {
+	public OperationResult listRecipes(RecipeSearchFilter searchFilter) {
 		try {
-			List<Recipe> foundRecipes = recipeDao.getRecipes(filter);
+			List<Recipe> foundRecipes = recipeDao.getRecipes(Optional.of(searchFilter));
 			return OperationResult.ok(foundRecipes);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -108,5 +114,26 @@ public class RecipeService {
 			return Optional.of("Полето име е задължително");
 
 		return Optional.empty();
+	}
+
+	public OperationResult getRecipeFilters() {
+		try {
+			RecipeFilters recipeFilters = new RecipeFilters();
+			List<Recipe> allRecipes = recipeDao.getRecipes(Optional.empty());
+
+			Map<String, Long> tags = allRecipes.stream().map(r -> r.getTags()).flatMap(Collection::stream).map(t -> t.toLowerCase())
+					.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+
+			Map<String, Long> ingredients = allRecipes.stream().map(r -> r.getIngredients()).flatMap(Collection::stream).map(i -> i.getName().toLowerCase())
+					.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+
+			recipeFilters.setTags(tags);
+			recipeFilters.setIngredients(ingredients);
+			return OperationResult.ok(recipeFilters);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return OperationResult.error(CommonMessages.GENERAL_ERROR.get());
+		}
+
 	}
 }
