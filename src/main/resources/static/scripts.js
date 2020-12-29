@@ -258,31 +258,57 @@ function clearInvalidInput(id) {
 	$(id).removeClass('is-invalid');
 }
 //}-----------------------------------------------------------------------------------------------------------
-//------------------------------------------------------OTHER------------------------------------------------
+//-----------------------------------------------------FILTERS------------------------------------------------
 //{-----------------------------------------------------------------------------------------------------------
-function setBtnToggleGroupState(button, nextState) {
-	var buttons = $(button).parent('.btn-group-toggle').find('.btn.filter-state');
-	$(buttons).attr('active','false');
-	$(buttons).filter('[state=' + nextState + ']').attr('active','true');
+function onClickFilterButton(button) {
+	var currentState = $(button).attr('state');
+	var nextState = (currentState + 1) % 3;
+	setFilterButtonState(button, nextState);
 	searchRecipes();
 }
 
+function setFilterButtonState(button, state) {
+	$(button).attr('state', state);
+	$(button).find('i').removeClass();
+	
+	var classes = '';
+	if(state == 0) {
+		classes = 'fa fa-square-o state-icon';
+	} else if (state == 1) {
+		classes = 'fa fa-check btn-green state-icon';
+	} else {
+		classes = 'fa fa-ban btn-red state-icon';
+	}
+	$(button).find('i').addClass(classes);
+}
+
 function onClickClearFiltersButton(button) {
-	var buttons = $(button).parent('.filter-category-div').find('.filter-category-body .btn.filter-state');
-	$(buttons).attr('active','false');
-	$(buttons).filter('[state=1]').attr('active','true');
+	var buttons = $(button).parent('.filter-category-div').find('.btn.filter-state');
+	$(buttons).each(function(i, btn) {
+		if($(btn).attr('state') != 0)
+			setFilterButtonState(btn, 0);
+	});
+	searchRecipes();
+}
+
+function onClickClearAllFiltersButton(button) {
+	var buttons = $(button).parents('#search-recipe-filters').find('.btn.filter-state');
+	$(buttons).each(function(i, btn) {
+		if($(btn).attr('state') != 0)
+			setFilterButtonState(btn, 0);
+	});
 	searchRecipes();
 }
 
 function collectFiltersState(container) {
 	var includes = [], excludes = [];
-	$(container).find('.filter-category-body .filter-body').each(function(i, filter) {
-		var state = $(filter).find('button[active=true]').attr('state');
-		if(state != 1) {
-			var tagName = $(filter).find('.filter-name').text();
-			if(state == 2)
+	$(container).find('.filter-category-body .btn.filter-state').each(function(i, btn) {
+		var state = $(btn).attr('state');
+		if(state != 0) {
+			var tagName = $(btn).find('.filter-name').text();
+			if(state == 1)
 				includes.push(tagName);
-			else if(state == 3)
+			else if(state == 2)
 				excludes.push(tagName);
 		}
 	});
@@ -582,20 +608,12 @@ function loadRecipeFiltersFail(data) {
 
 function addFilter(container, filterName, filterCount) {
 	$(container).append(
-		$('<div>').attr({'class' : 'filter-body'}).append([
-			$('<div>').attr({'class': 'btn-group-toggle', 'role': 'group'}).append([
-				$('<button>').attr({'type' : 'button', 'class': 'btn filter-state', 'active': 'true', 'state': 1}).append([
-					$('<i>').attr({'class': 'fa fa-square-o'})
-				]).click(function () { setBtnToggleGroupState(this, 2);} ),
-				$('<button>').attr({'type' : 'button', 'class': 'btn btn-green filter-state', 'active': 'false', 'state': 2}).append([
-					$('<i>').attr({'class': 'fa fa-check'})
-				]).click(function () { setBtnToggleGroupState(this, 3);} ),
-				$('<button>').attr({'type' : 'button', 'class': 'btn btn-red filter-state', 'active': 'false', 'state': 3}).append([
-					$('<i>').attr({'class': 'fa fa-ban'})
-				]).click(function () { setBtnToggleGroupState(this, 1);} ),
-			]),
-			$('<span>').attr({'class' : 'filter-name'}).append(filterName),
-			$('<span>').attr({'class' : 'filter-count badge badge-secondary'}).append(filterCount)
+		$('<div>').append([
+			$('<button>').attr({'type' : 'button', 'class': 'btn filter-state', 'state': 0}).append([
+				$('<i>').attr({'class': 'fa fa-square-o state-icon'}),
+				$('<span>').attr({'class' : 'filter-name'}).append(filterName),
+				$('<span>').attr({'class' : 'filter-count badge badge-secondary'}).append(filterCount)
+			]).click(function () { onClickFilterButton(this);} )
 		])
 	);
 }

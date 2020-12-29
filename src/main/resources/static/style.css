@@ -141,7 +141,7 @@ form div label {
 
 .ingredients-container-div {
 	max-height: 30vh;
-    overflow-y: scroll;
+    overflow-y: auto;
 	min-height: 20vh;
 }
 
@@ -351,21 +351,16 @@ hr {
 
 .filter-state {
 	padding: 0px;
-    height: 20px;
-    width: 20px;
     line-height: normal;
 	background: none !important;
-}
-
-.btn-group-toggle {
-	position: relative;
-	display: inline-flex;
 	vertical-align: text-bottom;
-	margin-right: 5px;
+	box-shadow: none !important;
 }
 
-.btn.filter-state[active=false] {
-	display: none;
+.state-icon {
+	height: 20px;
+    width: 20px;
+	margin-right: 5px;
 }
 
 .badge {
@@ -376,10 +371,21 @@ hr {
 .slim-btn {
 	padding: 2px 1px;
 	margin: 3px 3px;
-	border: 1px solid;
+	border: 1px solid rgba(0,0,0,.125);
 }
 
 .filter-category-body {
 	padding-top: .75rem;
 	padding-bottom: .75rem;
+	max-height: 300px;
+	overflow-y: auto;
+}
+
+#clear-all-filters-div {
+	padding: 0px 5px;
+}
+
+#clear-all-filters-btn {
+	width: 100%;
+	margin: 0px;
 }
