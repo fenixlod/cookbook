@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.stereotype.Repository;
 
@@ -68,20 +69,34 @@ public class RecipeDao {
 	}
 
 	public List<Recipe> getRecipes(Optional<RecipeSearchParameters> filter) throws IOException {
-		// TODO: Implement filtering
 		Collection<Recipe> allRecipes = getRecipes().values();
 		if (filter.isEmpty())
 			return new ArrayList<>(allRecipes);
 		else {
+			Stream<Recipe> stream = allRecipes.stream();
 			RecipeSearchParameters searchParameters = filter.get();
 			Filters tagFilters = searchParameters.getTags();
-			List<String> includeTags = tagFilters.getIncludes() == null ? Collections.emptyList() : tagFilters.getIncludes();
-			List<String> excludeTags = tagFilters.getExcludes() == null ? Collections.emptyList() : tagFilters.getExcludes();
+			if (tagFilters.getIncludes().isPresent()) {
+				stream = stream.filter(recipe -> recipe.getTags().containsAll(tagFilters.getIncludes().get()));
+			}
 
-			allRecipes = allRecipes.stream().filter(recipe -> recipe.getTags().containsAll(includeTags))
-					.filter(recipe -> Collections.disjoint(recipe.getTags(), excludeTags)).collect(Collectors.toList());
+			if (tagFilters.getExcludes().isPresent()) {
+				stream = stream.filter(recipe -> Collections.disjoint(recipe.getTags(), tagFilters.getExcludes().get()));
+			}
 
-			return new ArrayList<>(allRecipes);
+			Filters ingredientFilters = searchParameters.getIngredients();
+			if (ingredientFilters.getIncludes().isPresent()) {
+				stream = stream.filter(recipe -> recipe.getIngredients().stream().map(i -> i.getName()).collect(Collectors.toList())
+						.containsAll(ingredientFilters.getIncludes().get()));
+			}
+
+			if (ingredientFilters.getExcludes().isPresent()) {
+				stream = stream
+						.filter(recipe -> Collections.disjoint(recipe.getIngredients().stream().map(i -> i.getName()).collect(Collectors.toList()),
+								ingredientFilters.getExcludes().get()));
+			}
+
+			return stream.collect(Collectors.toList());
 		}
 	}
 

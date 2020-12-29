@@ -381,7 +381,7 @@ function searchRecipesSuccess(data) {
 				$('<td>').attr({'class': 'minimum-cell'}).append(recipe.name),
 				$('<td>').html(buildRecipeDescription(recipe.description)),
 				$('<td>').append(recipeTagsToString(recipe.tags)),
-				$('<td>').append(recipeIngredientsToString(recipe.ingredients)),
+				$('<td>').attr({'class': 'maximum-cell'}).append(recipeIngredientsToString(recipe.ingredients)),
 				$('<td>').append(buildRecipeActionsBar(recipe))
 			])
 		);

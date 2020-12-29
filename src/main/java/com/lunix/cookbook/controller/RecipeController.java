@@ -1,6 +1,7 @@
 package com.lunix.cookbook.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,21 +35,16 @@ public class RecipeController {
 	}
 
 	@GetMapping("")
-	public ResponseEntity<?> listRecipes2(@RequestParam(name = "tags[includes][]", required = false) List<String> tagsIncludesFilter,
-			@RequestParam(name = "tags[excludes][]", required = false) List<String> tagsExcludesFilter,
-			@RequestParam(name = "ingredients[includes][]", required = false) List<String> ingredientsIncludesFilter,
-			@RequestParam(name = "ingredients[excludes][]", required = false) List<String> ingredientsExcludesFilter,
+	public ResponseEntity<?> listRecipes2(@RequestParam(name = "tags[includes][]", required = false) Optional<List<String>> incluseTags,
+			@RequestParam(name = "tags[excludes][]", required = false) Optional<List<String>> excludeTags,
+			@RequestParam(name = "ingredients[includes][]", required = false) Optional<List<String>> incluseIngredients,
+			@RequestParam(name = "ingredients[excludes][]", required = false) Optional<List<String>> excluseIngredients,
 			@RequestParam(name = "limit", required = false) Integer limit, @RequestParam(name = "offset", required = false) Integer offset) {
 		RecipeSearchParameters filter = new RecipeSearchParameters();
 		filter.setLimit(limit);
 		filter.setOffset(offset);
-		Filters tagFilters = new Filters(), ingredientsFilters = new Filters();
-		tagFilters.setIncludes(tagsIncludesFilter);
-		tagFilters.setExcludes(tagsExcludesFilter);
-		filter.setTags(tagFilters);
-		ingredientsFilters.setIncludes(ingredientsIncludesFilter);
-		ingredientsFilters.setExcludes(ingredientsExcludesFilter);
-		filter.setIngredients(ingredientsFilters);
+		filter.setTags(new Filters(incluseTags, excludeTags));
+		filter.setIngredients(new Filters(incluseIngredients, excluseIngredients));
 		return service.listRecipes(filter).get();
 	}
 
