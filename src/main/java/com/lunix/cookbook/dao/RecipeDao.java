@@ -77,22 +77,25 @@ public class RecipeDao {
 			RecipeSearchParameters searchParameters = filter.get();
 			Filters tagFilters = searchParameters.getTags();
 			if (tagFilters.getIncludes().isPresent()) {
-				stream = stream.filter(recipe -> recipe.getTags().containsAll(tagFilters.getIncludes().get()));
+				stream = stream.filter(
+						recipe -> recipe.getTags().stream().map(t -> t.toLowerCase()).collect(Collectors.toList()).containsAll(tagFilters.getIncludes().get()));
 			}
 
 			if (tagFilters.getExcludes().isPresent()) {
-				stream = stream.filter(recipe -> Collections.disjoint(recipe.getTags(), tagFilters.getExcludes().get()));
+				stream = stream.filter(recipe -> Collections.disjoint(recipe.getTags().stream().map(t -> t.toLowerCase()).collect(Collectors.toList()),
+						tagFilters.getExcludes().get()));
 			}
 
 			Filters ingredientFilters = searchParameters.getIngredients();
 			if (ingredientFilters.getIncludes().isPresent()) {
-				stream = stream.filter(recipe -> recipe.getIngredients().stream().map(i -> i.getName()).collect(Collectors.toList())
+				stream = stream.filter(recipe -> recipe.getIngredients().stream().map(i -> i.getName().toLowerCase()).collect(Collectors.toList())
 						.containsAll(ingredientFilters.getIncludes().get()));
 			}
 
 			if (ingredientFilters.getExcludes().isPresent()) {
 				stream = stream
-						.filter(recipe -> Collections.disjoint(recipe.getIngredients().stream().map(i -> i.getName()).collect(Collectors.toList()),
+						.filter(recipe -> Collections.disjoint(
+								recipe.getIngredients().stream().map(i -> i.getName().toLowerCase()).collect(Collectors.toList()),
 								ingredientFilters.getExcludes().get()));
 			}
 

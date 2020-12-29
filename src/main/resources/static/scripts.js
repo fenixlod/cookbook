@@ -195,7 +195,7 @@ function addTag(tag, container) {
 	$(container).append(
 		$('<span>').attr({'class': 'tag-body form-control form-control-sm'}).append([
 			$('<label>').attr({'class': 'tag-label'}).append(tag),
-			$('<button>').attr({'class': 'btn btn-sm tag-remove-btn fa fa-times'}).click(function () { onClickRemoveTagButton(this);})
+			$('<button>').attr({'class': 'btn btn-sm tag-remove-btn fa fa-times', 'type': 'button'}).click(function () { onClickRemoveTagButton(this);})
 		])
 	);
 }
@@ -318,8 +318,7 @@ function collectFiltersState(container) {
 //------------------------------------------------------RECIPE------------------------------------------------
 //{-----------------------------------------------------------------------------------------------------------
 function initializeRecipePage() {
-	loadRecipeFilters();
-	searchRecipes();
+	refreshRecipePage();
 }
 
 function onClickAddNewRecipeButton() {
@@ -473,7 +472,7 @@ function onClickConfirmDeleteRecipeButton(id) {
 function deleteRecipeSuccess(data) {
 	setStatusMessage('Рецептата изтрита успешно', 'green', actionButtons['recipe-delete']);
 	actionButtons['recipe-delete'] = null;
-	searchRecipes();
+	refreshRecipePage();
 }
 
 function deleteRecipeFail(data) {
@@ -533,7 +532,7 @@ function saveRecipeSuccess() {
 	setStatusMessage('Рецептата записана успешно', 'green', actionButtons['recipe-edit']);
 	$('#recipe-dialog').modal('hide');
 	actionButtons['recipe-edit'] = null;
-	searchRecipes();
+	refreshRecipePage();
 }
 
 function saveRecipeFail(data) {
@@ -592,14 +591,17 @@ function loadRecipeFilters() {
 
 function loadRecipeFiltersSuccess(data) {
 	setStatusMessage('Зареждане на филтрите успешно', 'green');
-	
+	var availableTags = [];
 	for (var filter in data){
 		var filterContainer = $('#filters-' + filter  + ' .filter-category-body');
 		$(filterContainer).empty();
 		for (var key in data[filter]){
 			addFilter(filterContainer, key, data[filter][key]);
+			if(filter == 'tags')
+				availableTags.push(key);
 		}
 	}
+	updateTagsAutocomplete(availableTags);
 }
 
 function loadRecipeFiltersFail(data) {
@@ -616,5 +618,17 @@ function addFilter(container, filterName, filterCount) {
 			]).click(function () { onClickFilterButton(this);} )
 		])
 	);
+}
+
+function refreshRecipePage() {
+	searchRecipes();
+	loadRecipeFilters();
+}
+
+function updateTagsAutocomplete(tags) {
+	$('#recipe-tags-input').autocomplete({
+		source: tags,
+		appendTo: '#recipe-dialog'
+	});
 }
 //}
