@@ -9,6 +9,7 @@ var apiPaths = {
 }
 var runnigTimeouts = {};
 var actionButtons = {};
+var loadedFilters = {};
 //}-----------------------------------------------------------------------------------------------------------
 //--------------------------------------------------------GENERAL---------------------------------------------
 //{-----------------------------------------------------------------------------------------------------------
@@ -34,6 +35,7 @@ function initializeMainTab(tabId) {
 	if(tabId == 'recipes-div') {
 		initializeRecipePage();
 	} else if(tabId == 'recipe-randomizer-div') {
+		initializeMenuPage();
 	}
 }
 //}-----------------------------------------------------------------------------------------------------------
@@ -591,6 +593,7 @@ function loadRecipeFilters() {
 
 function loadRecipeFiltersSuccess(data) {
 	setStatusMessage('Зареждане на филтрите успешно', 'green');
+	loadedFilters = data;
 	var availableTags = [];
 	for (var filter in data){
 		var filterContainer = $('#filters-' + filter  + ' .filter-category-body');
@@ -630,5 +633,10 @@ function updateTagsAutocomplete(tags) {
 		source: tags,
 		appendTo: '#recipe-dialog'
 	});
+}
+//}-----------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------MENU-------------------------------------------------
+//{-----------------------------------------------------------------------------------------------------------
+function initializeMenuPage() {
 }
 //}

@@ -156,13 +156,13 @@ form div label {
 	text-align: left;
 }
 
-#recipes-div {
+#recipes-div, #create-menu-div {
 	display: flex;
 	margin: 0px auto;
 	height: 100%;
 }
 
-.bordered {
+.bordered-div {
 	border: 1px solid rgba(0,0,0,.125);
 	border-radius: .25rem;
 	margin: 3px 2px;
@@ -179,11 +179,11 @@ hr {
 	border-bottom: 1px solid;
 }
 
-#search-recipe-row {
+.full-row {
 	height: 100%;
 }
 
-#recipes-card {
+#recipes-card, #menu-card {
 	height: 100%;
 	display: flex;
 	flex-direction: column;
@@ -389,3 +389,65 @@ hr {
 	width: 100%;
 	margin: 0px;
 }
+
+#add-definition-div {
+	padding: 5px;
+	display: flex;
+}
+
+.definition-add-btn {
+	background: none;
+	box-shadow: none;
+	margin: auto;
+}
+
+#menu-generate-div {
+	padding: 7px 0px 2px 0px;
+	display: flex;
+}
+
+#menu-generate-btn {
+	margin: auto;
+	width: 200px;
+	border: 1px solid rgba(0,0,0,.125);
+	font-size: 20px;
+	padding: 0px;
+}
+
+.grid-row-label {
+	padding-left: calc(.375rem + 1px) !important;
+}
+
+.grid-column-label {
+	margin: auto;
+}
+
+.flex-element {
+	display: flex;
+}
+
+.btn-multiselect {
+	font-size: 14px;
+	border: 1px solid #ced4da !important;
+	background-color: white !important;
+	font-weight: normal !important;
+}
+
+.dropdown {
+	height: 100%;
+	padding: 1px;
+}
+
+#definitions-body .dropdown-menu.show .bs-select-all {
+	display: none;
+}
+
+#definitions-body .dropdown-menu.show .bs-deselect-all {
+	border-top-left-radius: 0.2rem;
+	border-bottom-left-radius: 0.2rem;
+}
+
+.bs-searchbox input {
+	height: 30px;
+}
+
