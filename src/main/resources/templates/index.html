@@ -61,6 +61,16 @@
 					'infoEmpty': 'Показват се 0 резултата',
 				  }
 			});
+			
+			$('.selectpicker').selectpicker({
+				noneSelectedText: '',
+				deselectAllText: 'Изчисти',
+				noneResultsText: 'Няма намерени резултати {0}',
+				style: 'btn-multiselect',
+				width: '100%',
+				actionsBox: true,
+				liveSearch: true
+			});
 		});
 	</script>
 </head>
@@ -169,21 +179,11 @@
 													<label class="col-form-label grid-row-label">Тагове</label>
 												</div>
 												<div class="col-md-5">
-													<select id="include-tags" class="selectpicker" multiple data-live-search="true" data-actions-box="true" data-none-selected-text="" data-deselect-all-text="Изчисти" data-style="btn-multiselect" data-width="100%">
-														<option value="1">Таг 1</option>
-														<option value="2">Таг 2</option>
-														<option value="3">Таг 3</option>
-														<option value="4">Таг 4</option>
-														<option value="5">Таг 5</option>
+													<select id="include-tags" class="selectpicker" multiple>
 													</select>
 												</div>
 												<div class="col-md-5">
-													<select id="exclude-tags" class="selectpicker" multiple data-live-search="true" data-actions-box="true" data-none-selected-text="" data-deselect-all-text="Изчисти" data-style="btn-multiselect" data-width="100%">
-														<option value="1">Таг 1</option>
-														<option value="2">Таг 2</option>
-														<option value="3">Таг 3</option>
-														<option value="4">Таг 4</option>
-														<option value="5">Таг 5</option>
+													<select id="exclude-tags" class="selectpicker" multiple>
 													</select>
 												</div>
 											</div>
@@ -192,21 +192,11 @@
 													<label class="col-form-label grid-row-label">Продукти</label>
 												</div>
 												<div class="col-md-5">
-													<select id="include-ingredients" class="selectpicker" multiple data-live-search="true" data-actions-box="true" data-none-selected-text="" data-deselect-all-text="Изчисти" data-style="btn-multiselect" data-width="100%">
-														<option value="1">Продукт 1</option>
-														<option value="2">Продукт 2</option>
-														<option value="3">Продукт 3</option>
-														<option value="4">Продукт 4</option>
-														<option value="5">Продукт 5</option>
+													<select id="include-ingredients" class="selectpicker" multiple>
 													</select>
 												</div>
 												<div class="col-md-5">
-													<select id="exclude-ingredients" class="selectpicker" multiple data-live-search="true" data-actions-box="true" data-none-selected-text="" data-deselect-all-text="Изчисти" data-style="btn-multiselect" data-width="100%">
-														<option value="1">Продукт 1</option>
-														<option value="2">Продукт 2</option>
-														<option value="3">Продукт 3</option>
-														<option value="4">Продукт 4</option>
-														<option value="5">Продукт 5</option>
+													<select id="exclude-ingredients" class="selectpicker" multiple>
 													</select>
 												</div>
 											</div>

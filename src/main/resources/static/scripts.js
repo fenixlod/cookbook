@@ -9,7 +9,8 @@ var apiPaths = {
 }
 var runnigTimeouts = {};
 var actionButtons = {};
-var loadedFilters = {};
+var availableTags = [];
+var availableIngredients = [];
 //}-----------------------------------------------------------------------------------------------------------
 //--------------------------------------------------------GENERAL---------------------------------------------
 //{-----------------------------------------------------------------------------------------------------------
@@ -34,7 +35,7 @@ function switchMainTab(id) {
 function initializeMainTab(tabId) {
 	if(tabId == 'recipes-div') {
 		initializeRecipePage();
-	} else if(tabId == 'recipe-randomizer-div') {
+	} else if(tabId == 'create-menu-div') {
 		initializeMenuPage();
 	}
 }
@@ -220,6 +221,7 @@ function onClickAddIngredientButton(button) {
 	var ingredientsDiv = $(button).parents().find('.ingredients-container-div');
 	$('#div-templates .ingredient-div').clone().appendTo(ingredientsDiv);
 	$(ingredientsDiv).scrollTop($(ingredientsDiv)[0].scrollHeight);
+	updateIngredientsAutocomplete($('#recipe-dialog .ingredient-name').last());
 }
 
 function onClickRemoveIngredientButton(button) {
@@ -493,6 +495,7 @@ function onClickEditRecipeButton(button) {
 function getRecipeSuccess(data) {
 	setStatusMessage('', 'green', actionButtons['recipe-edit']);
 	openRecipeDialog('EDIT', data);
+	updateIngredientsAutocomplete($('#recipe-dialog .ingredient-name'));
 }
 
 function getRecipeFail(data) {
@@ -593,8 +596,7 @@ function loadRecipeFilters() {
 
 function loadRecipeFiltersSuccess(data) {
 	setStatusMessage('Зареждане на филтрите успешно', 'green');
-	loadedFilters = data;
-	var availableTags = [];
+	availableTags = [];availableIngredients = [];
 	for (var filter in data){
 		var filterContainer = $('#filters-' + filter  + ' .filter-category-body');
 		$(filterContainer).empty();
@@ -602,9 +604,11 @@ function loadRecipeFiltersSuccess(data) {
 			addFilter(filterContainer, key, data[filter][key]);
 			if(filter == 'tags')
 				availableTags.push(key);
+			else if(filter == 'ingredients')
+				availableIngredients.push(key);
 		}
 	}
-	updateTagsAutocomplete(availableTags);
+	updateTagsAutocomplete();
 }
 
 function loadRecipeFiltersFail(data) {
@@ -628,9 +632,16 @@ function refreshRecipePage() {
 	loadRecipeFilters();
 }
 
-function updateTagsAutocomplete(tags) {
+function updateTagsAutocomplete() {
 	$('#recipe-tags-input').autocomplete({
-		source: tags,
+		source: availableTags,
+		appendTo: '#recipe-dialog'
+	});
+}
+
+function updateIngredientsAutocomplete(element) {
+	$(element).autocomplete({
+		source: availableIngredients,
 		appendTo: '#recipe-dialog'
 	});
 }
@@ -638,5 +649,33 @@ function updateTagsAutocomplete(tags) {
 //-------------------------------------------------------MENU-------------------------------------------------
 //{-----------------------------------------------------------------------------------------------------------
 function initializeMenuPage() {
+	populateDefinitionsSelects($('#definitions-container #definitions-body'));
+}
+
+function populateDefinitionsSelects(container) {
+	var includeTgas = $(container).find('#include-tags');
+	var excludeTgas = $(container).find('#exclude-tags');
+	var includeIngredients = $(container).find('#include-ingredients');
+	var excludeIngredients = $(container).find('#exclude-ingredients');
+	
+	includeTgas.empty();
+	excludeTgas.empty();
+	includeIngredients.empty();
+	excludeIngredients.empty();
+	
+	for (var key of availableTags){
+		includeTgas.append(new Option(key, key));
+		excludeTgas.append(new Option(key, key));
+	}
+	
+	for (var key of availableIngredients){
+		includeIngredients.append(new Option(key, key));
+		excludeIngredients.append(new Option(key, key));
+	}
+	
+	includeTgas.selectpicker('refresh');
+	excludeTgas.selectpicker('refresh');
+	includeIngredients.selectpicker('refresh');
+	excludeIngredients.selectpicker('refresh');
 }
 //}
