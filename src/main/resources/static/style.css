@@ -132,6 +132,7 @@ form div label {
 .ingredient-add-btn {
 	background: none;
 	box-shadow: none;
+	width: 100%;
 }
 
 .ingredient-div {
@@ -399,6 +400,7 @@ hr {
 	background: none;
 	box-shadow: none;
 	margin: auto;
+	width: 100%;
 }
 
 #menu-generate-div {
@@ -457,10 +459,17 @@ hr {
 
 #definitions-container {
 	overflow-y: auto;
-	height: 75vh;
+	max-height: 75vh;
 }
 
 #definitions-body {
 	margin-bottom: 5px;
 	height: max-content;
+}
+
+.btn-remove-definition {
+	background: none !important;
+	box-shadow: none !important;
+	color: red;
+	padding: 0px 3px 3px 3px;
 }

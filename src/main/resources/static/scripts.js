@@ -680,12 +680,20 @@ function populateDefinitionsSelects(container) {
 	$(excludeIngredients).selectpicker('refresh');
 }
 
-function onClickAddMealButton(button) {
+function onClickAddMealButton() {
 	var mealsDiv = $('#definitions-container');
+	var count = parseInt($(mealsDiv).find('[id=definitions-body]').last().find('.definition-count').text());
+	if(isNaN(count))
+		count = 0;
 	var selectDiv = $('#div-templates #definitions-body').clone();
 	$(selectDiv).find('.bootstrap-select').replaceWith(function() { return $('select', this); });
 	selectDiv.appendTo(mealsDiv);
 	$(selectDiv).find('.selectpicker').selectpicker('refresh');
 	$(mealsDiv).scrollTop($(mealsDiv)[0].scrollHeight);
+	$(selectDiv).find('.definition-count').text(count + 1);
+}
+
+function onClickRemoveMealButton(button) {
+	$(button).parents('#definitions-body').remove();
 }
 //}
