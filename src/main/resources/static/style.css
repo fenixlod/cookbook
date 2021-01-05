@@ -451,3 +451,16 @@ hr {
 	height: 30px;
 }
 
+.bootstrap-select .dropdown-item {
+	padding: 1px 1.0rem;
+}
+
+#definitions-container {
+	overflow-y: auto;
+	height: 75vh;
+}
+
+#definitions-body {
+	margin-bottom: 5px;
+	height: max-content;
+}

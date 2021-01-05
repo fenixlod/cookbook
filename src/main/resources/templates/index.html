@@ -61,16 +61,6 @@
 					'infoEmpty': 'Показват се 0 резултата',
 				  }
 			});
-			
-			$('.selectpicker').selectpicker({
-				noneSelectedText: '',
-				deselectAllText: 'Изчисти',
-				noneResultsText: 'Няма намерени резултати {0}',
-				style: 'btn-multiselect',
-				width: '100%',
-				actionsBox: true,
-				liveSearch: true
-			});
 		});
 	</script>
 </head>
@@ -161,50 +151,9 @@
 								<h4>Задание</h4>
 								<hr class="solid">
 								<div id="definitions-container">
-									<div id="definitions-body" class="bordered-div">
-										<div class="full-row">
-											<div class="row no-gutters">
-												<div class="col-md-2">
-													<label class="col-form-label grid-row-label">&nbsp;</label>
-												</div>
-												<div class="col-md-5 flex-element">
-													<label class="col-form-label grid-column-label">Да се съдържат</label>
-												</div>
-												<div class="col-md-5 flex-element">
-													<label class="col-form-label grid-column-label">Да не се съдържат</label>
-												</div>
-											</div>
-											<div class="row no-gutters">
-												<div class="col-md-2">
-													<label class="col-form-label grid-row-label">Тагове</label>
-												</div>
-												<div class="col-md-5">
-													<select id="include-tags" class="selectpicker" multiple>
-													</select>
-												</div>
-												<div class="col-md-5">
-													<select id="exclude-tags" class="selectpicker" multiple>
-													</select>
-												</div>
-											</div>
-											<div class="row no-gutters">
-												<div class="col-md-2">
-													<label class="col-form-label grid-row-label">Продукти</label>
-												</div>
-												<div class="col-md-5">
-													<select id="include-ingredients" class="selectpicker" multiple>
-													</select>
-												</div>
-												<div class="col-md-5">
-													<select id="exclude-ingredients" class="selectpicker" multiple>
-													</select>
-												</div>
-											</div>
-										</div>
-									</div>
 								</div>
 								<div id="add-definition-div">
-									<button type="button" class="btn btn-sm definition-add-btn" onclick="(this)">+ Добави ястие</button>
+									<button type="button" class="btn btn-sm definition-add-btn" onclick="onClickAddMealButton(this)">+ Добави ястие</button>
 								</div>
 							</div>
 						</div>
@@ -248,6 +197,51 @@
 		<div id="data-table-search-div" class="input-group input-group-sm">
 			<div class="input-group-append">
 				<label class="input-group-text"><i class="fa fa-search fa-big-xl"></i></label>
+			</div>
+		</div>
+		<div id="definitions-body" class="bordered-div">
+			<div class="card-header">
+				<span>Ястие</span>
+				<span class="definition-count">1</span>
+			</div>
+			<div>
+				<div class="row no-gutters">
+					<div class="col-md-2">
+						<label class="col-form-label grid-row-label">&nbsp;</label>
+					</div>
+					<div class="col-md-5 flex-element">
+						<label class="col-form-label grid-column-label">Да се съдържат</label>
+					</div>
+					<div class="col-md-5 flex-element">
+						<label class="col-form-label grid-column-label">Да не се съдържат</label>
+					</div>
+				</div>
+				<div class="row no-gutters">
+					<div class="col-md-2">
+						<label class="col-form-label grid-row-label">Тагове</label>
+					</div>
+					<div class="col-md-5">
+						<select id="include-tags" class="selectpicker" multiple data-live-search="true" data-actions-box="true" data-none-selected-text="" data-deselect-all-text="Изчисти" data-none-results-text="Няма намерени резултати {0}" data-style="btn-multiselect" data-width="100%">
+						</select>
+					</div>
+					<div class="col-md-5">
+						<select id="exclude-tags" class="selectpicker" multiple data-live-search="true" data-actions-box="true" data-none-selected-text="" data-deselect-all-text="Изчисти" data-none-results-text="Няма намерени резултати {0}" data-style="btn-multiselect" data-width="100%">
+						</select>
+					</div>
+				</div>
+				<div class="row no-gutters">
+					<div class="col-md-2">
+						<label class="col-form-label grid-row-label">Продукти</label>
+					</div>
+					<div class="col-md-5">
+						<select id="include-ingredients" class="selectpicker" multiple data-live-search="true" data-actions-box="true" data-none-selected-text="" data-deselect-all-text="Изчисти" data-none-results-text="Няма намерени резултати {0}" data-style="btn-multiselect" data-width="100%">
+						</select>
+					</div>
+					<div class="col-md-5">
+						<select id="exclude-ingredients" class="selectpicker" multiple data-live-search="true" data-actions-box="true" data-none-selected-text="" data-deselect-all-text="Изчисти" data-none-results-text="Няма намерени резултати {0}" data-style="btn-multiselect" data-width="100%">
+						</select>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

@@ -180,6 +180,7 @@ function setErrorStatusMessage(data, alternativeMessage, bindElement) {
 	}
 	setStatusMessage(message, 'red', bindElement);
 }
+
 //}-----------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------TAGS-----------------------------------------------
 //{-----------------------------------------------------------------------------------------------------------
@@ -649,7 +650,7 @@ function updateIngredientsAutocomplete(element) {
 //-------------------------------------------------------MENU-------------------------------------------------
 //{-----------------------------------------------------------------------------------------------------------
 function initializeMenuPage() {
-	populateDefinitionsSelects($('#definitions-container #definitions-body'));
+	populateDefinitionsSelects('#div-templates #definitions-body');
 }
 
 function populateDefinitionsSelects(container) {
@@ -658,24 +659,33 @@ function populateDefinitionsSelects(container) {
 	var includeIngredients = $(container).find('#include-ingredients');
 	var excludeIngredients = $(container).find('#exclude-ingredients');
 	
-	includeTgas.empty();
-	excludeTgas.empty();
-	includeIngredients.empty();
-	excludeIngredients.empty();
+	$(includeTgas).empty();
+	$(excludeTgas).empty();
+	$(includeIngredients).empty();
+	$(excludeIngredients).empty();
 	
 	for (var key of availableTags){
-		includeTgas.append(new Option(key, key));
-		excludeTgas.append(new Option(key, key));
+		$(includeTgas).append(new Option(key, key));
+		$(excludeTgas).append(new Option(key, key));
 	}
 	
 	for (var key of availableIngredients){
-		includeIngredients.append(new Option(key, key));
-		excludeIngredients.append(new Option(key, key));
+		$(includeIngredients).append(new Option(key, key));
+		$(excludeIngredients).append(new Option(key, key));
 	}
 	
-	includeTgas.selectpicker('refresh');
-	excludeTgas.selectpicker('refresh');
-	includeIngredients.selectpicker('refresh');
-	excludeIngredients.selectpicker('refresh');
+	$(includeTgas).selectpicker('refresh');
+	$(excludeTgas).selectpicker('refresh');
+	$(includeIngredients).selectpicker('refresh');
+	$(excludeIngredients).selectpicker('refresh');
+}
+
+function onClickAddMealButton(button) {
+	var mealsDiv = $('#definitions-container');
+	var selectDiv = $('#div-templates #definitions-body').clone();
+	$(selectDiv).find('.bootstrap-select').replaceWith(function() { return $('select', this); });
+	selectDiv.appendTo(mealsDiv);
+	$(selectDiv).find('.selectpicker').selectpicker('refresh');
+	$(mealsDiv).scrollTop($(mealsDiv)[0].scrollHeight);
 }
 //}
