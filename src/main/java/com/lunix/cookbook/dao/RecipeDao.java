@@ -31,7 +31,7 @@ public class RecipeDao {
 		db.save(recipes.values());
 	}
 
-	private Map<String, Recipe> getRecipes() throws IOException {
+	private synchronized Map<String, Recipe> getRecipes() throws IOException {
 		if (recipes == null) {
 			recipes = new HashMap<>();
 			db.load().forEach(obj -> {

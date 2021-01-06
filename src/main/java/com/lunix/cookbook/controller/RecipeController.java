@@ -35,7 +35,7 @@ public class RecipeController {
 	}
 
 	@GetMapping("")
-	public ResponseEntity<?> listRecipes2(@RequestParam(name = "tags[includes][]", required = false) Optional<List<String>> incluseTags,
+	public ResponseEntity<?> listRecipes(@RequestParam(name = "tags[includes][]", required = false) Optional<List<String>> incluseTags,
 			@RequestParam(name = "tags[excludes][]", required = false) Optional<List<String>> excludeTags,
 			@RequestParam(name = "ingredients[includes][]", required = false) Optional<List<String>> incluseIngredients,
 			@RequestParam(name = "ingredients[excludes][]", required = false) Optional<List<String>> excluseIngredients,
