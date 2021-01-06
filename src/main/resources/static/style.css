@@ -391,12 +391,12 @@ hr {
 	margin: 0px;
 }
 
-#add-definition-div {
+#add-menu-meal-div {
 	padding: 5px;
 	display: flex;
 }
 
-.definition-add-btn {
+.meal-btn {
 	background: none;
 	box-shadow: none;
 	margin: auto;
@@ -440,11 +440,11 @@ hr {
 	padding: 1px;
 }
 
-#definitions-body .dropdown-menu.show .bs-select-all {
+.menu-meal-body .dropdown-menu.show .bs-select-all {
 	display: none;
 }
 
-#definitions-body .dropdown-menu.show .bs-deselect-all {
+.menu-meal-body .dropdown-menu.show .bs-deselect-all {
 	border-top-left-radius: 0.2rem;
 	border-bottom-left-radius: 0.2rem;
 }
@@ -457,17 +457,17 @@ hr {
 	padding: 1px 1.0rem;
 }
 
-#definitions-container {
+#menu-meals-container {
 	overflow-y: auto;
-	max-height: 75vh;
+	height: 75vh;
 }
 
-#definitions-body {
+.menu-meal-body {
 	margin-bottom: 5px;
 	height: max-content;
 }
 
-.btn-remove-definition {
+.backgroundless-btn {
 	background: none !important;
 	box-shadow: none !important;
 	color: red;

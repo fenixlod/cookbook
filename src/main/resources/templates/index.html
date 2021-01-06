@@ -146,14 +146,14 @@
 								<hr class="solid">
 							</div>
 						</div>
-						<div id="menu-definitions" class="col-md-5">
+						<div id="menu-meals" class="col-md-5">
 							<div class="bordered-div">
 								<h4>Задание</h4>
 								<hr class="solid">
-								<div id="definitions-container">
+								<div id="menu-meals-container">
 								</div>
-								<div id="add-definition-div">
-									<button type="button" class="btn btn-sm definition-add-btn" onclick="onClickAddMealButton()">+ Добави ястие</button>
+								<div id="add-menu-meal-div">
+									<button type="button" class="btn btn-sm meal-btn" onclick="onClickAddMealButton()">+ Добави ястие</button>
 								</div>
 							</div>
 						</div>
@@ -165,7 +165,7 @@
 						</div>
 					</div>
 					<div id="menu-generate-div">
-						<button id="menu-generate-btn" type="button" class="btn" onclick="(this)">Генерирай меню</button>
+						<button id="menu-generate-btn" type="button" class="btn" onclick="onClickGenerateMenuButton()">Генерирай меню</button>
 					</div>
 				</div>
 			</div>
@@ -199,11 +199,11 @@
 				<label class="input-group-text"><i class="fa fa-search fa-big-xl"></i></label>
 			</div>
 		</div>
-		<div id="definitions-body" class="bordered-div">
+		<div class="bordered-div menu-meal-body">
 			<div class="card-header">
 				<span>Ястие</span>
-				<span class="definition-count">1</span>
-				<span><button type="button" class="btn btn-sm fa fa-times btn-remove-definition" onclick="onClickRemoveMealButton(this)" title="Премахни"></button></span>
+				<span class="menu-meal-count">1</span>
+				<span><button type="button" class="btn btn-sm fa fa-times backgroundless-btn" onclick="onClickRemoveMealButton(this)" title="Премахни"></button></span>
 			</div>
 			<div>
 				<div class="row no-gutters">
@@ -331,7 +331,6 @@
 				</div>
 			</div>
 		</div>
-
 	</div>
 	<script>
 		$('.tags-input').keyup(function(event) {

@@ -650,7 +650,7 @@ function updateIngredientsAutocomplete(element) {
 //-------------------------------------------------------MENU-------------------------------------------------
 //{-----------------------------------------------------------------------------------------------------------
 function initializeMenuPage() {
-	populateDefinitionsSelects('#div-templates #definitions-body');
+	populateDefinitionsSelects('#div-templates .menu-meal-body');
 }
 
 function populateDefinitionsSelects(container) {
@@ -681,19 +681,41 @@ function populateDefinitionsSelects(container) {
 }
 
 function onClickAddMealButton() {
-	var mealsDiv = $('#definitions-container');
-	var count = parseInt($(mealsDiv).find('[id=definitions-body]').last().find('.definition-count').text());
+	var mealsDiv = $('#menu-meals-container');
+	var count = parseInt($(mealsDiv).find('.menu-meal-body').last().find('.menu-meal-count').text());
 	if(isNaN(count))
 		count = 0;
-	var selectDiv = $('#div-templates #definitions-body').clone();
+	var selectDiv = $('#div-templates .menu-meal-body').clone();
 	$(selectDiv).find('.bootstrap-select').replaceWith(function() { return $('select', this); });
 	selectDiv.appendTo(mealsDiv);
 	$(selectDiv).find('.selectpicker').selectpicker('refresh');
 	$(mealsDiv).scrollTop($(mealsDiv)[0].scrollHeight);
-	$(selectDiv).find('.definition-count').text(count + 1);
+	$(selectDiv).find('.menu-meal-count').text(count + 1);
 }
 
 function onClickRemoveMealButton(button) {
-	$(button).parents('#definitions-body').remove();
+	$(button).parents('.menu-meal-body').remove();
+}
+
+function onClickGenerateMenuButton() {
+	var menu = {
+		meals: getMenuMeals(),
+		settings: {}
+	};
+	console.log(JSON.stringify(menu));
+}
+
+function getMenuMeals() {
+	var menu = [];
+	$('#menu-meals .menu-meal-body').each(function (i, element) {
+		var meal = { tags: {}, ingredients: {}, name:''};
+		meal.tags['exclude'] = $(element).find('#exclude-tags').val();
+		meal.tags['include'] = $(element).find('#include-tags').val();
+		meal.ingredients['exclude'] = $(element).find('#exclude-ingredients').val();
+		meal.ingredients['include'] = $(element).find('#include-ingredients').val();
+		meal.name = $(element).find('.menu-meal-count').text();
+		menu.push(meal);
+	});
+	return menu;
 }
 //}
