@@ -5,7 +5,8 @@
 //{-----------------------------------------------------------------------------------------------------------
 var baseUrl = 'http://localhost:80';
 var apiPaths = {
-	recipes: '/recipes'
+	recipes: '/recipes',
+	menu: '/menu'
 }
 var runnigTimeouts = {};
 var actionButtons = {};
@@ -702,11 +703,20 @@ function onClickGenerateMenuButton() {
 		meals: getMenuMeals(),
 		settings: {}
 	};
-	console.log(JSON.stringify(menu));
+	setStatusMessage('Генериране на меню.....', 'blue', '#menu-generate-btn');
+	callApiUrl('POST', apiPaths.menu, menu, generateMenuSuccess, generateMenuFail);
+}
+
+function generateMenuSuccess(data) {
+	setStatusMessage('Менюто генерирано успешно', 'green', '#menu-generate-btn');
+}
+
+function generateMenuFail(data) {
+	setErrorStatusMessage(data, 'Грешка при опита да се генерира меню', '#menu-generate-btn');
 }
 
 function getMenuMeals() {
-	var menu = [];
+	var meals = [];
 	$('#menu-meals .menu-meal-body').each(function (i, element) {
 		var meal = { tags: {}, ingredients: {}, name:''};
 		meal.tags['exclude'] = $(element).find('#exclude-tags').val();
@@ -714,8 +724,8 @@ function getMenuMeals() {
 		meal.ingredients['exclude'] = $(element).find('#exclude-ingredients').val();
 		meal.ingredients['include'] = $(element).find('#include-ingredients').val();
 		meal.name = $(element).find('.menu-meal-count').text();
-		menu.push(meal);
+		meals.push(meal);
 	});
-	return menu;
+	return meals;
 }
 //}
