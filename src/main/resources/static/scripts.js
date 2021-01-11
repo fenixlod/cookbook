@@ -701,7 +701,9 @@ function onClickRemoveMealButton(button) {
 function onClickGenerateMenuButton() {
 	var menu = {
 		meals: getMenuMeals(),
-		settings: {}
+		settings: { 
+					suggestions: $('#menu-settings-count-suggestions').val()
+				  }
 	};
 	setStatusMessage('Генериране на меню.....', 'blue', '#menu-generate-btn');
 	callApiUrl('POST', apiPaths.menu, menu, generateMenuSuccess, generateMenuFail);
@@ -709,6 +711,27 @@ function onClickGenerateMenuButton() {
 
 function generateMenuSuccess(data) {
 	setStatusMessage('Менюто генерирано успешно', 'green', '#menu-generate-btn');
+	var mealsContainer = $('#menu-meals-suggestions');
+	$(mealsContainer).empty();
+	
+	for (var suggestion of data){
+		var div = $('<div>').attr({'class': 'bordered-div menu-meal-body'}).append(
+			$('<div>').attr({'class': 'card-header'}).append([
+				$('<span>').append('Ястие'),
+				$('<span>').attr({'class': 'menu-suggestion-name'}).append(suggestion.name)
+			]),
+			$('<div>').attr({'class': 'menu-suggestion-recipes'}).append([
+			])
+		);
+		
+		for (var recipe of suggestion.suggestedRecipes){
+			$(div).find('.menu-suggestion-recipes').append(
+				$('<div>').attr({'class': 'menu-suggestion-recipe'}).append(recipe.name)
+			);
+		}
+		
+		$(mealsContainer).append(div);
+	}
 }
 
 function generateMenuFail(data) {

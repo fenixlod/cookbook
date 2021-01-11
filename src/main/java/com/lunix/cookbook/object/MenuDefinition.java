@@ -3,14 +3,14 @@ package com.lunix.cookbook.object;
 import java.util.List;
 
 public class MenuDefinition {
-	private Object settings;
+	private MenuSettings settings;
 	private List<MenuMeal> meals;
 
-	public Object getSettings() {
+	public MenuSettings getSettings() {
 		return settings;
 	}
 
-	public void setSettings(Object settings) {
+	public void setSettings(MenuSettings settings) {
 		this.settings = settings;
 	}
 

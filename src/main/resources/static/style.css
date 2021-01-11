@@ -473,3 +473,23 @@ hr {
 	color: red;
 	padding: 0px 3px 3px 3px;
 }
+
+#menu-settings-count-suggestions {
+	width: 55px;
+	margin-left: auto;
+}
+
+.settings-div {
+	padding: 0px 2px;
+}
+
+.menu-suggestion-name {
+	margin-left: 5px;
+}
+
+.menu-suggestion-recipes {
+}
+
+.menu-suggestion-recipe {
+	padding-left: 3px;
+}
