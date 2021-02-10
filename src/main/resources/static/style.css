@@ -141,7 +141,7 @@ form div label {
 }
 
 .ingredients-container-div {
-	max-height: 30vh;
+	max-height: calc(100vh - 720px);
     overflow-y: auto;
 	min-height: 20vh;
 }
