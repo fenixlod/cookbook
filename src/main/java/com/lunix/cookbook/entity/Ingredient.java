@@ -1,6 +1,8 @@
 package com.lunix.cookbook.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -15,6 +17,8 @@ public class Ingredient {
 	private Long id;
 	private String name;
 	private float amount;
+
+	@Enumerated(EnumType.STRING)
 	private IngredientAmountUnit unit;
 
 	public Long getId() {

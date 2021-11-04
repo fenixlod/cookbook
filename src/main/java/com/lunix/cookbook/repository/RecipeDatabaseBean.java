@@ -1,6 +1,6 @@
 package com.lunix.cookbook.repository;
 
-import com.lunix.cookbook.model.Recipe;
+import com.lunix.cookbook.model.RecipeOld;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,7 +17,7 @@ public class RecipeDatabaseBean {
 	}
 
 	@Bean
-	public LocalJsonDatabase<Recipe> createRecipeDatabase() {
-		return new LocalJsonDatabase<Recipe>(properties.getRecipe(), mapper, Recipe.class);
+	public LocalJsonDatabase<RecipeOld> createRecipeDatabase() {
+		return new LocalJsonDatabase<RecipeOld>(properties.getRecipe(), mapper, RecipeOld.class);
 	}
 }

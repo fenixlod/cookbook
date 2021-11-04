@@ -14,9 +14,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.lunix.cookbook.dao.RecipeDao;
+import com.lunix.cookbook.entity.Recipe;
 import com.lunix.cookbook.enums.CommonMessages;
 import com.lunix.cookbook.exception.RecipeValidationException;
-import com.lunix.cookbook.model.Recipe;
+import com.lunix.cookbook.model.RecipeOld;
 import com.lunix.cookbook.object.RecipeFilterCounts;
 import com.lunix.cookbook.object.RecipeSearchParameters;
 import com.lunix.cookbook.utility.OperationResult;
@@ -29,7 +30,7 @@ public class RecipeService {
 		this.recipeDao = dao;
 	}
 
-	public OperationResult createRecipe(com.lunix.cookbook.entity.Recipe newRecipe) throws RecipeValidationException, IOException {
+	public OperationResult createRecipe(Recipe newRecipe) throws RecipeValidationException, IOException {
 		validateRecipe(newRecipe);
 		if (recipeDao.getByName(newRecipe.getName()).isPresent())
 			throw new RecipeValidationException("Рецепта с това име вече съществува");
@@ -40,7 +41,7 @@ public class RecipeService {
 
 	public OperationResult listRecipes(RecipeSearchParameters searchParameters) {
 		try {
-			List<Recipe> foundRecipes = recipeDao.getRecipes(Optional.of(searchParameters));
+			List<RecipeOld> foundRecipes = recipeDao.getRecipes(Optional.of(searchParameters));
 			return OperationResult.ok(foundRecipes);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -51,7 +52,7 @@ public class RecipeService {
 
 	public OperationResult getRecipe(String id) {
 		try {
-			Optional<Recipe> recipe = recipeDao.getById(id);
+			Optional<RecipeOld> recipe = recipeDao.getById(id);
 			if (recipe.isEmpty())
 				return OperationResult.notFound("Рецептата не е открита");
 
@@ -62,15 +63,15 @@ public class RecipeService {
 		}
 	}
 
-	public OperationResult updateRecipe(String id, Recipe updatedRecipe) throws RecipeValidationException {
+	public OperationResult updateRecipe(String id, RecipeOld updatedRecipe) throws RecipeValidationException {
 		// validateRecipe(updatedRecipe);
 
 		try {
-			Optional<Recipe> oldRecipe = recipeDao.getById(id);
+			Optional<RecipeOld> oldRecipe = recipeDao.getById(id);
 			if (oldRecipe.isEmpty())
 				return OperationResult.notFound("Рецептата не е открита");
 
-			Optional<Recipe> recipe = recipeDao.getByName(updatedRecipe.getName());
+			Optional<RecipeOld> recipe = recipeDao.getByName(updatedRecipe.getName());
 			if (recipe.isPresent()) {
 				if (!recipe.get().getId().equals(id))
 					return OperationResult.invalid("Рецепта с това име вече съществува");
@@ -87,7 +88,7 @@ public class RecipeService {
 
 	public OperationResult deleteRecipe(String id) {
 		try {
-			Optional<Recipe> recipe = recipeDao.getById(id);
+			Optional<RecipeOld> recipe = recipeDao.getById(id);
 			if (recipe.isEmpty())
 				return OperationResult.notFound("Рецептата не е открита");
 
@@ -99,7 +100,7 @@ public class RecipeService {
 		}
 	}
 
-	private void validateRecipe(com.lunix.cookbook.entity.Recipe recipe) throws RecipeValidationException {
+	private void validateRecipe(Recipe recipe) throws RecipeValidationException {
 		if (StringUtils.isEmpty(recipe.getName()))
 			throw new RecipeValidationException("Име на рецептата е задължително поле");
 	}
@@ -107,7 +108,7 @@ public class RecipeService {
 	public OperationResult getRecipeFilters() {
 		try {
 			RecipeFilterCounts recipeFilters = new RecipeFilterCounts();
-			List<Recipe> allRecipes = recipeDao.getRecipes(Optional.empty());
+			List<RecipeOld> allRecipes = recipeDao.getRecipes(Optional.empty());
 
 			Map<String, Long> tags = allRecipes.stream().map(r -> r.getTags()).flatMap(Collection::stream).map(t -> t.toLowerCase())
 					.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));

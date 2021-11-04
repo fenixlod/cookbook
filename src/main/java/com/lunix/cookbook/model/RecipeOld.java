@@ -2,7 +2,7 @@ package com.lunix.cookbook.model;
 
 import java.util.List;
 
-public class Recipe {
+public class RecipeOld {
 	private String id;
 	private String name;
 	private String description;

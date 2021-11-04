@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.lunix.cookbook.dao.RecipeDao;
 import com.lunix.cookbook.enums.CommonMessages;
-import com.lunix.cookbook.model.Recipe;
+import com.lunix.cookbook.model.RecipeOld;
 import com.lunix.cookbook.object.Filters;
 import com.lunix.cookbook.object.MealRequirement;
 import com.lunix.cookbook.object.MenuDefinition;
@@ -33,16 +33,16 @@ public class MenuService {
 			int countSuggestions = menuDefinition.getSettings().getSuggestions();
 			for (MenuMeal meal : menuDefinition.getMeals()) {
 				MenuResult result = new MenuResult();
-				List<Recipe> suggestedRecipes = new ArrayList<>();
+				List<RecipeOld> suggestedRecipes = new ArrayList<>();
 
 				result.setName(meal.getName());
 				RecipeSearchParameters parameters = new RecipeSearchParameters();
 				parameters.setIngredients(transformToFilter(meal.getIngredients()));
 				parameters.setTags(transformToFilter(meal.getTags()));
-				List<Recipe> possibleRecipes = recipeDao.getRecipes(Optional.of(parameters));
+				List<RecipeOld> possibleRecipes = recipeDao.getRecipes(Optional.of(parameters));
 				
 				for (int i = 0; i < countSuggestions; i++) {
-					Optional<Recipe> randomRecipe = getRandomRecipe(possibleRecipes);
+					Optional<RecipeOld> randomRecipe = getRandomRecipe(possibleRecipes);
 					if (randomRecipe.isEmpty())
 						break;
 
@@ -63,7 +63,7 @@ public class MenuService {
 		return new Filters(Optional.of(requirement.getInclude()), Optional.of(requirement.getExclude()));
 	}
 
-	private Optional<Recipe> getRandomRecipe(List<Recipe> recipes) {
+	private Optional<RecipeOld> getRandomRecipe(List<RecipeOld> recipes) {
 		if (recipes.isEmpty())
 			return Optional.empty();
 
@@ -72,7 +72,7 @@ public class MenuService {
 			random = ThreadLocalRandom.current().nextInt(0, recipes.size());
 		}
 
-		Recipe chosenRecipe = recipes.get(random);
+		RecipeOld chosenRecipe = recipes.get(random);
 		recipes.remove(random);
 		return Optional.of(chosenRecipe);
 	}

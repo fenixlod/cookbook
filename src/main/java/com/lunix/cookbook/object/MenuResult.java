@@ -2,11 +2,11 @@ package com.lunix.cookbook.object;
 
 import java.util.List;
 
-import com.lunix.cookbook.model.Recipe;
+import com.lunix.cookbook.model.RecipeOld;
 
 public class MenuResult {
 	private String name;
-	private List<Recipe> suggestedRecipes;
+	private List<RecipeOld> suggestedRecipes;
 
 	public String getName() {
 		return name;
@@ -16,11 +16,11 @@ public class MenuResult {
 		this.name = name;
 	}
 
-	public List<Recipe> getSuggestedRecipes() {
+	public List<RecipeOld> getSuggestedRecipes() {
 		return suggestedRecipes;
 	}
 
-	public void setSuggestedRecipes(List<Recipe> suggestedRecipes) {
+	public void setSuggestedRecipes(List<RecipeOld> suggestedRecipes) {
 		this.suggestedRecipes = suggestedRecipes;
 	}
 }
