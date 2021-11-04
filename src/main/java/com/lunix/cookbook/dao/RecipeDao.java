@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.lunix.cookbook.repository.TagRepository;
 import org.springframework.stereotype.Repository;
 
 import com.lunix.cookbook.model.Recipe;
@@ -24,10 +25,12 @@ public class RecipeDao {
 	private LocalJsonDatabase<Recipe> db;
 	private Map<String, Recipe> recipes;
 	private final RecipeRepository recipeRepo;
+	private final TagRepository tagRepo;
 
-	public RecipeDao(LocalJsonDatabase<Recipe> database, RecipeRepository recipeRepo) {
+	public RecipeDao(LocalJsonDatabase<Recipe> database, RecipeRepository recipeRepo, TagRepository tagRepo) {
 		this.db = database;
 		this.recipeRepo = recipeRepo;
+		this.tagRepo = tagRepo;
 	}
 
 	public void save() throws IOException {
@@ -46,6 +49,14 @@ public class RecipeDao {
 	}
 
 	public void createNew(com.lunix.cookbook.entity.Recipe newRecipe) {
+		var tags = newRecipe
+				.getTags()
+				.stream()
+				.map(tag -> tagRepo.findByValue(tag.getValue()).orElse(tag))
+				.collect(Collectors.toSet());
+
+		newRecipe.setTags(tags);
+
 		recipeRepo.save(newRecipe);
 	}
 

@@ -1,14 +1,10 @@
 package com.lunix.cookbook.entity;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "recipe")
@@ -21,20 +17,20 @@ public class Recipe {
 	private String preparation;
 
 	@ManyToMany(targetEntity = Tag.class, cascade = CascadeType.ALL)
-	// @JoinTable(name = "recipe_tag", joinColumns = @JoinColumn(name = "id"),
-	// inverseJoinColumns = @JoinColumn(name = "id"))
-	private List<Tag> tags;
+	 @JoinTable(name = "recipe_tag", joinColumns = @JoinColumn(name = "recipe_id"),
+	 inverseJoinColumns = @JoinColumn(name = "tag_id"))
+	private Set<Tag> tags = new HashSet<>();
 
 	@OneToMany(targetEntity = Ingredient.class, cascade = CascadeType.ALL)
 	// @JoinTable(name = "recipe_ingredient", joinColumns = @JoinColumn(name =
 	// "id"), inverseJoinColumns = @JoinColumn(name = "id"))
 	private List<Ingredient> ingredients;
 
-	public List<Tag> getTags() {
+	public Set<Tag> getTags() {
 		return tags;
 	}
 
-	public void setTags(List<Tag> tags) {
+	public void setTags(Set<Tag> tags) {
 		this.tags = tags;
 	}
 
