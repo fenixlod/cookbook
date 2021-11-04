@@ -14,6 +14,7 @@ public class Ingredient {
 	@GeneratedValue(generator = "ingredient_generator")
 	private Long id;
 	private String name;
+	private float amount;
 	private IngredientAmountUnit unit;
 
 	public Long getId() {
@@ -38,5 +39,13 @@ public class Ingredient {
 
 	public void setUnit(IngredientAmountUnit unit) {
 		this.unit = unit;
+	}
+
+	public float getAmount() {
+		return amount;
+	}
+
+	public void setAmount(float amount) {
+		this.amount = amount;
 	}
 }

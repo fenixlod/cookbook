@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -24,7 +25,7 @@ public class Recipe {
 	// inverseJoinColumns = @JoinColumn(name = "id"))
 	private List<Tag> tags;
 
-	@ManyToMany(targetEntity = Ingredient.class, cascade = CascadeType.ALL)
+	@OneToMany(targetEntity = Ingredient.class, cascade = CascadeType.ALL)
 	// @JoinTable(name = "recipe_ingredient", joinColumns = @JoinColumn(name =
 	// "id"), inverseJoinColumns = @JoinColumn(name = "id"))
 	private List<Ingredient> ingredients;
