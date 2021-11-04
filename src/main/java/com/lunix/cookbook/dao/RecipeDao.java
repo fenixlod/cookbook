@@ -17,14 +17,17 @@ import com.lunix.cookbook.model.Recipe;
 import com.lunix.cookbook.object.Filters;
 import com.lunix.cookbook.object.RecipeSearchParameters;
 import com.lunix.cookbook.repository.LocalJsonDatabase;
+import com.lunix.cookbook.repository.RecipeRepository;
 
 @Repository
 public class RecipeDao {
 	private LocalJsonDatabase<Recipe> db;
 	private Map<String, Recipe> recipes;
+	private final RecipeRepository recipeRepo;
 
-	public RecipeDao(LocalJsonDatabase<Recipe> database) {
+	public RecipeDao(LocalJsonDatabase<Recipe> database, RecipeRepository recipeRepo) {
 		this.db = database;
+		this.recipeRepo = recipeRepo;
 	}
 
 	public void save() throws IOException {
@@ -42,9 +45,8 @@ public class RecipeDao {
 		return recipes;
 	}
 
-	public void insert(Recipe newRecipe) throws IOException {
-		getRecipes().put(newRecipe.getId(), newRecipe);
-		save();
+	public void createNew(com.lunix.cookbook.entity.Recipe newRecipe) {
+		recipeRepo.save(newRecipe);
 	}
 
 	public Optional<Recipe> getByName(String recipeName) throws IOException {

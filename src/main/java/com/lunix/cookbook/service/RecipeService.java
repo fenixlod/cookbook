@@ -7,7 +7,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -16,6 +15,7 @@ import org.springframework.util.StringUtils;
 
 import com.lunix.cookbook.dao.RecipeDao;
 import com.lunix.cookbook.enums.CommonMessages;
+import com.lunix.cookbook.exception.RecipeValidationException;
 import com.lunix.cookbook.model.Recipe;
 import com.lunix.cookbook.object.RecipeFilterCounts;
 import com.lunix.cookbook.object.RecipeSearchParameters;
@@ -29,23 +29,13 @@ public class RecipeService {
 		this.recipeDao = dao;
 	}
 
-	public OperationResult addRecipe(Recipe newRecipe) {
-		Optional<String> validationResult = validateRecipe(newRecipe);
-		if (validationResult.isPresent())
-			return OperationResult.invalid(validationResult.get());
+	public OperationResult createRecipe(com.lunix.cookbook.entity.Recipe newRecipe) throws RecipeValidationException, IOException {
+		validateRecipe(newRecipe);
+		if (recipeDao.getByName(newRecipe.getName()).isPresent())
+			throw new RecipeValidationException("Рецепта с това име вече съществува");
 
-		try {
-			Optional<Recipe> recipe = recipeDao.getByName(newRecipe.getName());
-			if (recipe.isPresent())
-				return OperationResult.invalid("Рецепта с това име вече съществува");
-
-			newRecipe.setId(UUID.nameUUIDFromBytes(newRecipe.getName().getBytes("UTF-8")).toString());
-			recipeDao.insert(newRecipe);
-			return OperationResult.created(recipeDao);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return OperationResult.error(CommonMessages.GENERAL_ERROR.get());
-		}
+		recipeDao.createNew(newRecipe);
+		return OperationResult.created(recipeDao);
 	}
 
 	public OperationResult listRecipes(RecipeSearchParameters searchParameters) {
@@ -72,10 +62,8 @@ public class RecipeService {
 		}
 	}
 
-	public OperationResult updateRecipe(String id, Recipe updatedRecipe) {
-		Optional<String> validationResult = validateRecipe(updatedRecipe);
-		if (validationResult.isPresent())
-			return OperationResult.invalid(validationResult.get());
+	public OperationResult updateRecipe(String id, Recipe updatedRecipe) throws RecipeValidationException {
+		// validateRecipe(updatedRecipe);
 
 		try {
 			Optional<Recipe> oldRecipe = recipeDao.getById(id);
@@ -111,11 +99,9 @@ public class RecipeService {
 		}
 	}
 
-	private Optional<String> validateRecipe(Recipe recipe) {
+	private void validateRecipe(com.lunix.cookbook.entity.Recipe recipe) throws RecipeValidationException {
 		if (StringUtils.isEmpty(recipe.getName()))
-			return Optional.of("Полето име е задължително");
-
-		return Optional.empty();
+			throw new RecipeValidationException("Име на рецептата е задължително поле");
 	}
 
 	public OperationResult getRecipeFilters() {

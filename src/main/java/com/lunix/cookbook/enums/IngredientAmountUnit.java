@@ -1,5 +1,5 @@
 package com.lunix.cookbook.enums;
 
 public enum IngredientAmountUnit {
-	COUNT, VOLUME, WEIGHT, SPOON_BIG, SPOON_SMALL;
+	COUNT, VOLUME, WEIGHT, SPOON_BIG, SPOON_SMALL, SPOON_MEDIUM;
 }

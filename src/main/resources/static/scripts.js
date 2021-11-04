@@ -212,7 +212,10 @@ function onClickRemoveTagButton(button) {
 function getTags(container) {
 	var tags = [];
 	$(container).find('label').each(function (i, element) {
-		tags.push($(element).text());
+		var tag = {
+			value: $(element).text()
+		};
+		tags.push(tag);
 	});
 	return tags;
 }
@@ -339,7 +342,12 @@ function onClickInsertRecipeButton() {
 	
 	var recipe = getRecipeData();
 	setStatusMessage('Добавяне на нова рецепта.....', 'blue', '#insert-recipe-btn');
-	callApiUrl('POST', apiPaths.recipes, recipe, insertRecipeSuccess, insertRecipeFail);
+	callApiUrl('POST', apiPaths.recipes, recipe, function(data) {
+		setStatusMessage('Рецептата добавена успешно', 'green', '#insert-recipe-btn');
+		cleanRecipeForm();
+	}, function(data) {
+		setErrorStatusMessage(data, 'Грешка при опита да се добави нова рецепта', '#insert-recipe-btn');
+	});
 }
 
 function getRecipeData() {
@@ -363,15 +371,6 @@ function getRecipeIngredients(container) {
 		ingredients.push(ingredient);
 	});
 	return ingredients;
-}
-
-function insertRecipeSuccess(data) {
-	setStatusMessage('Рецептата добавена успешно', 'green', '#insert-recipe-btn');
-	cleanRecipeForm();
-}
-
-function insertRecipeFail(data) {
-	setErrorStatusMessage(data, 'Грешка при опита да се добави нова рецепта', '#insert-recipe-btn');
 }
 
 function cleanRecipeForm() {
