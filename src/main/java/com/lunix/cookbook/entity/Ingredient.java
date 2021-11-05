@@ -1,11 +1,13 @@
 package com.lunix.cookbook.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import javax.persistence.Table;
 
 import com.lunix.cookbook.enums.IngredientAmountUnit;
@@ -14,14 +16,16 @@ import com.lunix.cookbook.enums.IngredientAmountUnit;
 @Table(name = "ingredient")
 public class Ingredient {
 	@EmbeddedId
-	private IngredientId id = new IngredientId();
+	private IngredientKey id;
 
-	@ManyToOne
-	@JoinColumn(name = "recipe_id", referencedColumnName = "id")
+	@ManyToOne(cascade = CascadeType.ALL)
+	@MapsId("recipeId")
+	@JoinColumn(name = "recipe_id")
 	private Recipe recipe;
 
-	@ManyToOne
-	@JoinColumn(name = "product_id", referencedColumnName = "id")
+	@ManyToOne(cascade = CascadeType.ALL)
+	@MapsId("productId")
+	@JoinColumn(name = "product_id")
 	private Product product;
 
 	private float amount;
@@ -43,6 +47,14 @@ public class Ingredient {
 
 	public void setUnit(IngredientAmountUnit unit) {
 		this.unit = unit;
+	}
+
+	public IngredientKey getId() {
+		return id;
+	}
+
+	public void setId(IngredientKey id) {
+		this.id = id;
 	}
 
 	public Recipe getRecipe() {

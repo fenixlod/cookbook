@@ -29,11 +29,11 @@ public class Recipe {
 	@Column(columnDefinition = "text")
 	private String preparation;
 
-	@ManyToMany(targetEntity = Tag.class, cascade = CascadeType.ALL)
+	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "recipe_tags", joinColumns = @JoinColumn(name = "recipe_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
 	private Set<Tag> tags;
 
-	@OneToMany(targetEntity = Ingredient.class, cascade = CascadeType.ALL, mappedBy = "recipe")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "recipe")
 	private Set<Ingredient> ingredients;
 
 	public Set<Tag> getTags() {

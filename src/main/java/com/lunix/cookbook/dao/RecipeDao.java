@@ -14,7 +14,6 @@ import java.util.stream.Stream;
 
 import org.springframework.stereotype.Repository;
 
-import com.lunix.cookbook.entity.Product;
 import com.lunix.cookbook.entity.Recipe;
 import com.lunix.cookbook.entity.Tag;
 import com.lunix.cookbook.model.RecipeOld;
@@ -61,9 +60,10 @@ public class RecipeDao {
 				.map(t -> tagRepo.findByValue(t.getValue()).orElse(t))
 				.collect(Collectors.toSet());
 		newRecipe.setTags(mappedTags);
-		List<Product> products = newRecipe.getIngredients().parallelStream().map(i -> i.getProduct()).collect(Collectors.toList());
-		List<Product> savedProducts = productRepo.saveAll(products);
-		newRecipe.getIngredients().forEach(i -> i.setProduct(savedProducts.get(0)));
+		// List<Product> products = newRecipe.getIngredients().parallelStream().map(i ->
+		// i.getProduct()).collect(Collectors.toList());
+		// List<Product> savedProducts = productRepo.saveAll(products);
+		// newRecipe.getIngredients().forEach(i -> i.setProduct(savedProducts.get(0)));
 		recipeRepo.save(newRecipe);
 	}
 

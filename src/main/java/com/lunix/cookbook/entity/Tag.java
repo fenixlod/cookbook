@@ -24,7 +24,7 @@ public class Tag {
 	@Column(unique = true)
 	private String value;
 
-	@ManyToMany(targetEntity = Recipe.class, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinTable(name = "tag_recipes", joinColumns = @JoinColumn(name = "tag_id"), inverseJoinColumns = @JoinColumn(name = "recipe_id"))
 	private List<Recipe> recipes;
 

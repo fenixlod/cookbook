@@ -17,7 +17,7 @@ public class Product {
 	private Long id;
 	private String name;
 
-	@OneToMany(targetEntity = Ingredient.class, cascade = CascadeType.ALL, mappedBy = "product")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
 	private Set<Ingredient> ingredients;
 
 	public Long getId() {
