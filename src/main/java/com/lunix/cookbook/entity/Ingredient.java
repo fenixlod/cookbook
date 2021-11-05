@@ -1,13 +1,13 @@
 package com.lunix.cookbook.entity;
 
 import javax.persistence.CascadeType;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 import javax.persistence.Table;
 
 import com.lunix.cookbook.enums.IngredientAmountUnit;
@@ -15,16 +15,15 @@ import com.lunix.cookbook.enums.IngredientAmountUnit;
 @Entity
 @Table(name = "ingredient")
 public class Ingredient {
-	@EmbeddedId
-	private IngredientKey id;
+	@Id
+	@GeneratedValue(generator = "ingredient_generator")
+	private Long id;
 
 	@ManyToOne(cascade = CascadeType.ALL)
-	@MapsId("recipeId")
 	@JoinColumn(name = "recipe_id")
 	private Recipe recipe;
 
 	@ManyToOne(cascade = CascadeType.ALL)
-	@MapsId("productId")
 	@JoinColumn(name = "product_id")
 	private Product product;
 
@@ -49,14 +48,6 @@ public class Ingredient {
 		this.unit = unit;
 	}
 
-	public IngredientKey getId() {
-		return id;
-	}
-
-	public void setId(IngredientKey id) {
-		this.id = id;
-	}
-
 	public Recipe getRecipe() {
 		return recipe;
 	}
@@ -71,5 +62,13 @@ public class Ingredient {
 
 	public void setProduct(Product product) {
 		this.product = product;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 }
