@@ -60,10 +60,7 @@ public class RecipeDao {
 				.map(t -> tagRepo.findByValue(t.getValue()).orElse(t))
 				.collect(Collectors.toSet());
 		newRecipe.setTags(mappedTags);
-		// List<Product> products = newRecipe.getIngredients().parallelStream().map(i ->
-		// i.getProduct()).collect(Collectors.toList());
-		// List<Product> savedProducts = productRepo.saveAll(products);
-		// newRecipe.getIngredients().forEach(i -> i.setProduct(savedProducts.get(0)));
+		// TODO: check for products the same way as tags
 		recipeRepo.save(newRecipe);
 	}
 

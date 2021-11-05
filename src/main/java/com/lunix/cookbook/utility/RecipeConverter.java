@@ -28,6 +28,7 @@ public class RecipeConverter {
 			Product product = new Product();
 			product.setName(i.getName());
 			ingredient.setProduct(product);
+			ingredient.setRecipe(entity);
 			return ingredient;
 		}).collect(Collectors.toSet());
 		entity.setIngredients(ingredients);
