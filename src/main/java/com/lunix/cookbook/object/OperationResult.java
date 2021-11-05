@@ -1,4 +1,4 @@
-package com.lunix.cookbook.utility;
+package com.lunix.cookbook.object;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -212,10 +212,7 @@ function onClickRemoveTagButton(button) {
 function getTags(container) {
 	var tags = [];
 	$(container).find('label').each(function (i, element) {
-		var tag = {
-			value: $(element).text()
-		};
-		tags.push(tag);
+		tags.push($(element).text());
 	});
 	return tags;
 }

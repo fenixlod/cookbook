@@ -16,8 +16,8 @@ import com.lunix.cookbook.object.MealRequirement;
 import com.lunix.cookbook.object.MenuDefinition;
 import com.lunix.cookbook.object.MenuMeal;
 import com.lunix.cookbook.object.MenuResult;
+import com.lunix.cookbook.object.OperationResult;
 import com.lunix.cookbook.object.RecipeSearchParameters;
-import com.lunix.cookbook.utility.OperationResult;
 
 @Service
 public class MenuService {

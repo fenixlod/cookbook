@@ -14,13 +14,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.lunix.cookbook.dao.RecipeDao;
-import com.lunix.cookbook.entity.Recipe;
+import com.lunix.cookbook.dto.RecipeDto;
 import com.lunix.cookbook.enums.CommonMessages;
 import com.lunix.cookbook.exception.RecipeValidationException;
 import com.lunix.cookbook.model.RecipeOld;
+import com.lunix.cookbook.object.OperationResult;
 import com.lunix.cookbook.object.RecipeFilterCounts;
 import com.lunix.cookbook.object.RecipeSearchParameters;
-import com.lunix.cookbook.utility.OperationResult;
+import com.lunix.cookbook.utility.RecipeConverter;
 
 @Service
 public class RecipeService {
@@ -30,13 +31,13 @@ public class RecipeService {
 		this.recipeDao = dao;
 	}
 
-	public OperationResult createRecipe(Recipe newRecipe) throws RecipeValidationException, IOException {
+	public OperationResult createRecipe(RecipeDto newRecipe) throws RecipeValidationException, IOException {
 		validateRecipe(newRecipe);
 		if (recipeDao.getByName(newRecipe.getName()).isPresent())
 			throw new RecipeValidationException("Рецепта с това име вече съществува");
 
-		recipeDao.createNew(newRecipe);
-		return OperationResult.created(recipeDao);
+		recipeDao.createNew(RecipeConverter.toEntity(newRecipe));
+		return OperationResult.created(newRecipe);
 	}
 
 	public OperationResult listRecipes(RecipeSearchParameters searchParameters) {
@@ -100,7 +101,7 @@ public class RecipeService {
 		}
 	}
 
-	private void validateRecipe(Recipe recipe) throws RecipeValidationException {
+	private void validateRecipe(RecipeDto recipe) throws RecipeValidationException {
 		if (StringUtils.isEmpty(recipe.getName()))
 			throw new RecipeValidationException("Име на рецептата е задължително поле");
 	}

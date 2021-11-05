@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.lunix.cookbook.exception.RecipeValidationException;
-import com.lunix.cookbook.utility.ResponseMessage;
+import com.lunix.cookbook.object.ResponseMessage;
 
 @ControllerAdvice
 public class ExceptionHandlerAdvice {

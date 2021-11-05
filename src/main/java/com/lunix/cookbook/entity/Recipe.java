@@ -1,6 +1,5 @@
 package com.lunix.cookbook.entity;
 
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -34,9 +33,8 @@ public class Recipe {
 	@JoinTable(name = "recipe_tags", joinColumns = @JoinColumn(name = "recipe_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
 	private Set<Tag> tags;
 
-	@OneToMany(targetEntity = Ingredient.class, cascade = CascadeType.ALL)
-	@JoinTable(name = "recipe_ingredients", joinColumns = @JoinColumn(name = "recipe_id"), inverseJoinColumns = @JoinColumn(name = "ingredient_id"))
-	private List<Ingredient> ingredients;
+	@OneToMany(targetEntity = Ingredient.class, cascade = CascadeType.ALL, mappedBy = "recipe")
+	private Set<Ingredient> ingredients;
 
 	public Set<Tag> getTags() {
 		return tags;
@@ -46,11 +44,11 @@ public class Recipe {
 		this.tags = tags;
 	}
 
-	public List<Ingredient> getIngredients() {
+	public Set<Ingredient> getIngredients() {
 		return ingredients;
 	}
 
-	public void setIngredients(List<Ingredient> ingredients) {
+	public void setIngredients(Set<Ingredient> ingredients) {
 		this.ingredients = ingredients;
 	}
 

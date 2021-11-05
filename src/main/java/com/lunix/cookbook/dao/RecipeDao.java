@@ -14,12 +14,14 @@ import java.util.stream.Stream;
 
 import org.springframework.stereotype.Repository;
 
+import com.lunix.cookbook.entity.Product;
 import com.lunix.cookbook.entity.Recipe;
 import com.lunix.cookbook.entity.Tag;
 import com.lunix.cookbook.model.RecipeOld;
 import com.lunix.cookbook.object.Filters;
 import com.lunix.cookbook.object.RecipeSearchParameters;
 import com.lunix.cookbook.repository.LocalJsonDatabase;
+import com.lunix.cookbook.repository.ProductRepository;
 import com.lunix.cookbook.repository.RecipeRepository;
 import com.lunix.cookbook.repository.TagRepository;
 
@@ -29,11 +31,13 @@ public class RecipeDao {
 	private Map<String, RecipeOld> recipes;
 	private final RecipeRepository recipeRepo;
 	private final TagRepository tagRepo;
+	private final ProductRepository productRepo;
 
-	public RecipeDao(LocalJsonDatabase<RecipeOld> database, RecipeRepository recipeRepo, TagRepository tagRepo) {
+	public RecipeDao(LocalJsonDatabase<RecipeOld> database, RecipeRepository recipeRepo, TagRepository tagRepo, ProductRepository productRepo) {
 		this.db = database;
 		this.recipeRepo = recipeRepo;
 		this.tagRepo = tagRepo;
+		this.productRepo = productRepo;
 	}
 
 	public void save() throws IOException {
@@ -57,6 +61,9 @@ public class RecipeDao {
 				.map(t -> tagRepo.findByValue(t.getValue()).orElse(t))
 				.collect(Collectors.toSet());
 		newRecipe.setTags(mappedTags);
+		List<Product> products = newRecipe.getIngredients().parallelStream().map(i -> i.getProduct()).collect(Collectors.toList());
+		List<Product> savedProducts = productRepo.saveAll(products);
+		newRecipe.getIngredients().forEach(i -> i.setProduct(savedProducts.get(0)));
 		recipeRepo.save(newRecipe);
 	}
 

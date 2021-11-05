@@ -1,4 +1,4 @@
-package com.lunix.cookbook.utility;
+package com.lunix.cookbook.object;
 
 public class ResponseMessage {
 	private String message;

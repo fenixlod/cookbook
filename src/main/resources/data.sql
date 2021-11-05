@@ -1,3 +1,4 @@
+/*
 INSERT INTO recipe (id, name, description, preparation) VALUES
   (1, 'Супа пилешка', 'здравословна, без запържване/задушаване', ''),
   (2, 'Супа спаначена постна', '', 'В постния вариант да се прави с червен пипер, иначе е блудково на вкус и цвят.'),
@@ -256,3 +257,4 @@ INSERT INTO recipe_ingredients (recipe_id, ingredient_id) VALUES
   (17, 99),
   (17, 100),
   (17, 101);
+*/

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.lunix.cookbook.entity.Recipe;
+import com.lunix.cookbook.dto.RecipeDto;
 import com.lunix.cookbook.exception.RecipeValidationException;
 import com.lunix.cookbook.model.RecipeOld;
 import com.lunix.cookbook.object.Filters;
@@ -33,7 +33,7 @@ public class RecipeController {
 	}
 
 	@PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> createRecipe(@RequestBody Recipe newRecipe) throws RecipeValidationException, IOException {
+	public ResponseEntity<?> createRecipe(@RequestBody RecipeDto newRecipe) throws RecipeValidationException, IOException {
 		return service.createRecipe(newRecipe).get();
 	}
 
