@@ -1,11 +1,10 @@
 package com.lunix.cookbook.controller;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,8 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.lunix.cookbook.dto.RecipeDto;
 import com.lunix.cookbook.exception.RecipeValidationException;
 import com.lunix.cookbook.model.RecipeOld;
-import com.lunix.cookbook.object.Filters;
-import com.lunix.cookbook.object.RecipeSearchParameters;
+import com.lunix.cookbook.object.RecipeSearchFilter;
 import com.lunix.cookbook.service.RecipeService;
 
 @RestController
@@ -38,17 +36,8 @@ public class RecipeController {
 	}
 
 	@GetMapping("")
-	public ResponseEntity<?> listRecipes(@RequestParam(name = "tags[includes][]", required = false) Optional<List<String>> incluseTags,
-			@RequestParam(name = "tags[excludes][]", required = false) Optional<List<String>> excludeTags,
-			@RequestParam(name = "ingredients[includes][]", required = false) Optional<List<String>> incluseIngredients,
-			@RequestParam(name = "ingredients[excludes][]", required = false) Optional<List<String>> excluseIngredients,
-			@RequestParam(name = "limit", required = false) Integer limit, @RequestParam(name = "offset", required = false) Integer offset) {
-		RecipeSearchParameters filter = new RecipeSearchParameters();
-		filter.setLimit(limit);
-		filter.setOffset(offset);
-		filter.setTags(new Filters(incluseTags, excludeTags));
-		filter.setIngredients(new Filters(incluseIngredients, excluseIngredients));
-		return service.listRecipes(filter).get();
+	public ResponseEntity<?> listRecipes(@RequestParam MultiValueMap<String, String> queryParameters) {
+		return service.listRecipes(new RecipeSearchFilter(queryParameters)).get();
 	}
 
 	@GetMapping("/{id}")

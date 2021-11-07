@@ -17,7 +17,7 @@ import com.lunix.cookbook.object.MenuDefinition;
 import com.lunix.cookbook.object.MenuMeal;
 import com.lunix.cookbook.object.MenuResult;
 import com.lunix.cookbook.object.OperationResult;
-import com.lunix.cookbook.object.RecipeSearchParameters;
+import com.lunix.cookbook.object.RecipeSearchFilter;
 
 @Service
 public class MenuService {
@@ -36,7 +36,7 @@ public class MenuService {
 				List<RecipeOld> suggestedRecipes = new ArrayList<>();
 
 				result.setName(meal.getName());
-				RecipeSearchParameters parameters = new RecipeSearchParameters();
+				RecipeSearchFilter parameters = new RecipeSearchFilter();
 				parameters.setIngredients(transformToFilter(meal.getIngredients()));
 				parameters.setTags(transformToFilter(meal.getTags()));
 				List<RecipeOld> possibleRecipes = recipeDao.getRecipes(Optional.of(parameters));

@@ -15,12 +15,13 @@ import org.springframework.util.StringUtils;
 
 import com.lunix.cookbook.dao.RecipeDao;
 import com.lunix.cookbook.dto.RecipeDto;
+import com.lunix.cookbook.entity.Recipe;
 import com.lunix.cookbook.enums.CommonMessages;
 import com.lunix.cookbook.exception.RecipeValidationException;
 import com.lunix.cookbook.model.RecipeOld;
 import com.lunix.cookbook.object.OperationResult;
 import com.lunix.cookbook.object.RecipeFilterCounts;
-import com.lunix.cookbook.object.RecipeSearchParameters;
+import com.lunix.cookbook.object.RecipeSearchFilter;
 import com.lunix.cookbook.utility.RecipeConverter;
 
 @Service
@@ -40,7 +41,7 @@ public class RecipeService {
 		return OperationResult.created(newRecipe);
 	}
 
-	public OperationResult listRecipes(RecipeSearchParameters searchParameters) {
+	public OperationResult listRecipes(RecipeSearchFilter searchParameters) {
 		try {
 			List<RecipeOld> foundRecipes = recipeDao.getRecipes(Optional.of(searchParameters));
 			return OperationResult.ok(foundRecipes);
@@ -72,9 +73,9 @@ public class RecipeService {
 			if (oldRecipe.isEmpty())
 				return OperationResult.notFound("Рецептата не е открита");
 
-			Optional<RecipeOld> recipe = recipeDao.getByName(updatedRecipe.getName());
+			Optional<Recipe> recipe = recipeDao.getByName(updatedRecipe.getName());
 			if (recipe.isPresent()) {
-				if (!recipe.get().getId().equals(id))
+				if (!recipe.get().getId().equals(Long.valueOf(id)))
 					return OperationResult.invalid("Рецепта с това име вече съществува");
 			}
 

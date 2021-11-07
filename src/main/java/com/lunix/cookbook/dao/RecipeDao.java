@@ -16,7 +16,7 @@ import org.springframework.stereotype.Repository;
 import com.lunix.cookbook.entity.Recipe;
 import com.lunix.cookbook.model.RecipeOld;
 import com.lunix.cookbook.object.Filters;
-import com.lunix.cookbook.object.RecipeSearchParameters;
+import com.lunix.cookbook.object.RecipeSearchFilter;
 import com.lunix.cookbook.repository.LocalJsonDatabase;
 import com.lunix.cookbook.repository.RecipeRepository;
 import com.lunix.cookbook.repository.TagRepository;
@@ -57,8 +57,8 @@ public class RecipeDao {
 		recipeRepo.save(newRecipe);
 	}
 
-	public Optional<RecipeOld> getByName(String recipeName) throws IOException {
-		List<RecipeOld> foundRecipes = getRecipes().values().stream().filter(r -> r.getName().equalsIgnoreCase(recipeName)).collect(Collectors.toList());
+	public Optional<Recipe> getByName(String recipeName) throws IOException {
+		List<Recipe> foundRecipes = recipeRepo.findAllByNameIgnoreCase(recipeName);
 		if (foundRecipes.isEmpty())
 			return Optional.empty();
 
@@ -78,13 +78,13 @@ public class RecipeDao {
 		save();
 	}
 
-	public List<RecipeOld> getRecipes(Optional<RecipeSearchParameters> filter) throws IOException {
+	public List<RecipeOld> getRecipes(Optional<RecipeSearchFilter> filter) throws IOException {
 		Collection<RecipeOld> allRecipes = getRecipes().values();
 		if (filter.isEmpty())
 			return new ArrayList<>(allRecipes);
 		else {
 			Stream<RecipeOld> stream = allRecipes.stream();
-			RecipeSearchParameters searchParameters = filter.get();
+			RecipeSearchFilter searchParameters = filter.get();
 			Filters tagFilters = searchParameters.getTags();
 			if (tagFilters.getIncludes().isPresent()) {
 				stream = stream.filter(
