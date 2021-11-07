@@ -3,6 +3,7 @@ package com.lunix.cookbook.entity;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -15,6 +16,8 @@ public class Product {
 	@Id
 	@GeneratedValue(generator = "product_generator")
 	private Long id;
+
+	@Column(unique = true)
 	private String name;
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "product")

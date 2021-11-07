@@ -8,19 +8,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.springframework.stereotype.Repository;
 
 import com.lunix.cookbook.entity.Recipe;
-import com.lunix.cookbook.entity.Tag;
 import com.lunix.cookbook.model.RecipeOld;
 import com.lunix.cookbook.object.Filters;
 import com.lunix.cookbook.object.RecipeSearchParameters;
 import com.lunix.cookbook.repository.LocalJsonDatabase;
-import com.lunix.cookbook.repository.ProductRepository;
 import com.lunix.cookbook.repository.RecipeRepository;
 import com.lunix.cookbook.repository.TagRepository;
 
@@ -29,14 +26,14 @@ public class RecipeDao {
 	private LocalJsonDatabase<RecipeOld> db;
 	private Map<String, RecipeOld> recipes;
 	private final RecipeRepository recipeRepo;
-	private final TagRepository tagRepo;
-	private final ProductRepository productRepo;
+	private final ProductDao productDao;
+	private final TagDao tagDao;
 
-	public RecipeDao(LocalJsonDatabase<RecipeOld> database, RecipeRepository recipeRepo, TagRepository tagRepo, ProductRepository productRepo) {
+	public RecipeDao(LocalJsonDatabase<RecipeOld> database, RecipeRepository recipeRepo, TagRepository tagRepo, ProductDao productDao, TagDao tagDao) {
 		this.db = database;
 		this.recipeRepo = recipeRepo;
-		this.tagRepo = tagRepo;
-		this.productRepo = productRepo;
+		this.productDao = productDao;
+		this.tagDao = tagDao;
 	}
 
 	public void save() throws IOException {
@@ -55,12 +52,8 @@ public class RecipeDao {
 	}
 
 	public void createNew(Recipe newRecipe) {
-		Set<Tag> mappedTags = newRecipe.getTags()
-				.stream()
-				.map(t -> tagRepo.findByValue(t.getValue()).orElse(t))
-				.collect(Collectors.toSet());
-		newRecipe.setTags(mappedTags);
-		// TODO: check for products the same way as tags
+		newRecipe.setTags(tagDao.findTags(newRecipe.getTags()));
+		newRecipe.setIngredients(productDao.findIngredientProducts(newRecipe.getIngredients()));
 		recipeRepo.save(newRecipe);
 	}
 

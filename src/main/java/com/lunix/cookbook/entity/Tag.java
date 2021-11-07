@@ -43,4 +43,12 @@ public class Tag {
 	public void setValue(String value) {
 		this.value = value;
 	}
+
+	public List<Recipe> getRecipes() {
+		return recipes;
+	}
+
+	public void setRecipes(List<Recipe> recipes) {
+		this.recipes = recipes;
+	}
 }
