@@ -1,63 +1,49 @@
 package com.lunix.cookbook.dao;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.springframework.stereotype.Repository;
 
+import com.lunix.cookbook.entity.Ingredient;
 import com.lunix.cookbook.entity.Recipe;
-import com.lunix.cookbook.model.RecipeOld;
 import com.lunix.cookbook.object.Filters;
 import com.lunix.cookbook.object.RecipeSearchFilter;
-import com.lunix.cookbook.repository.LocalJsonDatabase;
+import com.lunix.cookbook.repository.IngredientRepository;
 import com.lunix.cookbook.repository.RecipeRepository;
 import com.lunix.cookbook.repository.TagRepository;
 
 @Repository
 public class RecipeDao {
-	private LocalJsonDatabase<RecipeOld> db;
-	private Map<String, RecipeOld> recipes;
 	private final RecipeRepository recipeRepo;
 	private final ProductDao productDao;
 	private final TagDao tagDao;
+	private final IngredientRepository ingredientRepo;
 
-	public RecipeDao(LocalJsonDatabase<RecipeOld> database, RecipeRepository recipeRepo, TagRepository tagRepo, ProductDao productDao, TagDao tagDao) {
-		this.db = database;
+	public RecipeDao(RecipeRepository recipeRepo, TagRepository tagRepo, ProductDao productDao, TagDao tagDao,
+			IngredientRepository ingredientRepo) {
 		this.recipeRepo = recipeRepo;
 		this.productDao = productDao;
 		this.tagDao = tagDao;
+		this.ingredientRepo = ingredientRepo;
 	}
 
-	public void save() throws IOException {
-		db.save(recipes.values());
-	}
-
-	private synchronized Map<String, RecipeOld> getRecipes() throws IOException {
-		if (recipes == null) {
-			recipes = new HashMap<>();
-			db.load().forEach(obj -> {
-				recipes.put(obj.getId(), obj);
-			});
-		}
-
-		return recipes;
-	}
-
-	public void createNew(Recipe newRecipe) {
+	public Recipe createNew(Recipe newRecipe) {
 		newRecipe.setTags(tagDao.findTags(newRecipe.getTags()));
 		newRecipe.setIngredients(productDao.findIngredientProducts(newRecipe.getIngredients()));
-		recipeRepo.save(newRecipe);
+		newRecipe.setIdentifier(UUID.randomUUID().toString());
+		return recipeRepo.save(newRecipe);
 	}
 
-	public Optional<Recipe> getByName(String recipeName) throws IOException {
+	public Optional<Recipe> getByName(String recipeName) {
 		List<Recipe> foundRecipes = recipeRepo.findAllByNameIgnoreCase(recipeName);
 		if (foundRecipes.isEmpty())
 			return Optional.empty();
@@ -65,47 +51,45 @@ public class RecipeDao {
 		return Optional.of(foundRecipes.get(0));
 	}
 
-	public Optional<RecipeOld> getById(String recipeId) throws IOException {
-		RecipeOld foundRecipe = getRecipes().get(recipeId);
-		if (foundRecipe == null)
-			return Optional.empty();
-
-		return Optional.of(foundRecipe);
+	public Optional<Recipe> getByIdentifier(String recipeId) {
+		return recipeRepo.findByIdentifier(recipeId);
 	}
 
-	public void delete(String recipeId) throws IOException {
-		getRecipes().remove(recipeId);
-		save();
+	public void delete(Recipe recipeToDelete) {
+		// TODO Fix me! Deleteing is cascaded!!
+		recipeRepo.delete(recipeToDelete);
 	}
 
-	public List<RecipeOld> getRecipes(Optional<RecipeSearchFilter> filter) throws IOException {
-		Collection<RecipeOld> allRecipes = getRecipes().values();
-		if (filter.isEmpty())
-			return new ArrayList<>(allRecipes);
+	public List<Recipe> findBy(RecipeSearchFilter filters) {
+		List<Recipe> allRecipes = getAll();
+
+		if (filters.isEmpty())
+			return allRecipes;
 		else {
-			Stream<RecipeOld> stream = allRecipes.stream();
-			RecipeSearchFilter searchParameters = filter.get();
-			Filters tagFilters = searchParameters.getTags();
+			Stream<Recipe> stream = allRecipes.stream();
+			Filters tagFilters = filters.getTags();
 			if (tagFilters.getIncludes().isPresent()) {
 				stream = stream.filter(
-						recipe -> recipe.getTags().stream().map(t -> t.toLowerCase()).collect(Collectors.toList()).containsAll(tagFilters.getIncludes().get()));
+						recipe -> recipe.getTags().stream().map(t -> t.getValue().toLowerCase()).collect(Collectors.toList())
+								.containsAll(tagFilters.getIncludes().get()));
 			}
 
 			if (tagFilters.getExcludes().isPresent()) {
-				stream = stream.filter(recipe -> Collections.disjoint(recipe.getTags().stream().map(t -> t.toLowerCase()).collect(Collectors.toList()),
+				stream = stream.filter(recipe -> Collections
+						.disjoint(recipe.getTags().stream().map(t -> t.getValue().toLowerCase()).collect(Collectors.toList()),
 						tagFilters.getExcludes().get()));
 			}
 
-			Filters ingredientFilters = searchParameters.getIngredients();
+			Filters ingredientFilters = filters.getIngredients();
 			if (ingredientFilters.getIncludes().isPresent()) {
-				stream = stream.filter(recipe -> recipe.getIngredients().stream().map(i -> i.getName().toLowerCase()).collect(Collectors.toList())
+				stream = stream.filter(recipe -> recipe.getIngredients().stream().map(i -> i.getProduct().getName().toLowerCase()).collect(Collectors.toList())
 						.containsAll(ingredientFilters.getIncludes().get()));
 			}
 
 			if (ingredientFilters.getExcludes().isPresent()) {
 				stream = stream
 						.filter(recipe -> Collections.disjoint(
-								recipe.getIngredients().stream().map(i -> i.getName().toLowerCase()).collect(Collectors.toList()),
+								recipe.getIngredients().stream().map(i -> i.getProduct().getName().toLowerCase()).collect(Collectors.toList()),
 								ingredientFilters.getExcludes().get()));
 			}
 
@@ -113,9 +97,42 @@ public class RecipeDao {
 		}
 	}
 
-	public void update(String id, RecipeOld recipe) throws IOException {
-		getRecipes().put(id, recipe);
-		save();
+	public List<Recipe> getAll() {
+		return recipeRepo.findAll();
 	}
 
+	public Recipe update(Recipe oldRecipe, Recipe newRecipe) {
+		oldRecipe.setDescription(newRecipe.getDescription());
+		oldRecipe.setName(newRecipe.getName());
+		oldRecipe.setPreparation(newRecipe.getPreparation());
+		oldRecipe.setTags(tagDao.findTags(newRecipe.getTags()));
+		
+		Map<String, Ingredient> newIngredientsMap = newRecipe.getIngredients().stream().collect(Collectors.toMap(i -> i.getProduct().getName(), i -> i));
+		List<Ingredient> ingredientsToRemove = new ArrayList<>();
+		Set<Ingredient> updatedIngredients = new HashSet<>();
+		for(Ingredient i : oldRecipe.getIngredients()) {
+			Ingredient newIngredient = newIngredientsMap.get(i.getProduct().getName());
+
+			if (newIngredient == null) {
+				ingredientsToRemove.add(i);
+			} else {
+				i.setAmount(newIngredient.getAmount());
+				i.setUnit(newIngredient.getUnit());
+				updatedIngredients.add(i);
+				newIngredientsMap.remove(i.getProduct().getName());
+			}
+		}
+		
+		Set<Ingredient> ingredientsToAdd = new HashSet<>(newIngredientsMap.values());
+		ingredientsToAdd = productDao.findIngredientProducts(ingredientsToAdd);
+		ingredientsToAdd.forEach(i -> i.setRecipe(oldRecipe));
+		updatedIngredients.addAll(ingredientsToAdd);
+		oldRecipe.setIngredients(updatedIngredients);
+		Recipe updatedRecipe = recipeRepo.save(oldRecipe);
+
+		if (!ingredientsToRemove.isEmpty())
+			ingredientRepo.deleteInBatch(ingredientsToRemove);
+
+		return updatedRecipe;
+	}
 }

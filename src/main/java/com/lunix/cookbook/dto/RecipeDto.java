@@ -3,18 +3,18 @@ package com.lunix.cookbook.dto;
 import java.util.List;
 
 public class RecipeDto {
-	private Long id;
+	private String id;
 	private String name;
 	private String description;
 	private String preparation;
 	private List<String> tags;
 	private List<IngredientDto> ingredients;
 
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

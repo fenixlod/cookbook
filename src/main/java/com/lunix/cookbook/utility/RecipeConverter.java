@@ -3,6 +3,7 @@ package com.lunix.cookbook.utility;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.lunix.cookbook.dto.IngredientDto;
 import com.lunix.cookbook.dto.RecipeDto;
 import com.lunix.cookbook.entity.Ingredient;
 import com.lunix.cookbook.entity.Product;
@@ -32,10 +33,24 @@ public class RecipeConverter {
 			return ingredient;
 		}).collect(Collectors.toSet());
 		entity.setIngredients(ingredients);
+		entity.setIdentifier(dto.getId());
 		return entity;
 	}
 
 	public static RecipeDto toDto(Recipe entity) {
-		return null;
+		RecipeDto dto = new RecipeDto();
+		dto.setDescription(entity.getDescription());
+		dto.setId(entity.getIdentifier());
+		dto.setName(entity.getName());
+		dto.setPreparation(entity.getPreparation());
+		dto.setTags(entity.getTags().stream().map(t -> t.getValue()).collect(Collectors.toList()));
+		dto.setIngredients(entity.getIngredients().stream().map(i -> {
+			IngredientDto ingredient = new IngredientDto();
+			ingredient.setAmount(i.getAmount());
+			ingredient.setUnit(i.getUnit());
+			ingredient.setName(i.getProduct().getName());
+			return ingredient;
+		}).collect(Collectors.toList()));
+		return dto;
 	}
 }

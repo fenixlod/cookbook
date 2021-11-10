@@ -61,6 +61,15 @@ public class RecipeSearchFilter {
 		this.offset = offset;
 	}
 
+	public boolean isEmpty() {
+		if ((tags == null || (tags.getIncludes().isEmpty() && tags.getExcludes().isEmpty()))
+				&& (ingredients == null || (ingredients.getIncludes().isEmpty() && ingredients.getExcludes().isEmpty()))) {
+			return true;
+		}
+
+		return false;
+	}
+
 	private Optional<List<String>> getParametersList(MultiValueMap<String, String> parameters, String listName) {
 		List<String> paramList = parameters.getOrDefault(listName, Collections.emptyList());
 		return Optional.of(paramList);

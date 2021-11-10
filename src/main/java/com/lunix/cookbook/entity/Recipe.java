@@ -23,6 +23,9 @@ public class Recipe {
 	@Column(unique = true)
 	private String name;
 
+	@Column(unique = true)
+	private String identifier;
+
 	@Column(length = 1024)
 	private String description;
 
@@ -82,5 +85,13 @@ public class Recipe {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getIdentifier() {
+		return identifier;
+	}
+
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
 	}
 }

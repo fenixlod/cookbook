@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.lunix.cookbook.dto.RecipeDto;
 import com.lunix.cookbook.exception.RecipeValidationException;
-import com.lunix.cookbook.model.RecipeOld;
 import com.lunix.cookbook.object.RecipeSearchFilter;
 import com.lunix.cookbook.service.RecipeService;
 
@@ -41,19 +40,19 @@ public class RecipeController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<?> getRecipe(@PathVariable(name = "id", required = true) String recipeId) {
-		return service.getRecipe(recipeId).get();
+	public ResponseEntity<?> getRecipe(@PathVariable(name = "id", required = true) String identifier) {
+		return service.getRecipe(identifier).get();
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<?> updateRecipe(@PathVariable(name = "id", required = true) String recipeId,
-			@RequestBody RecipeOld updatedRecipe) {
-		return service.updateRecipe(recipeId, updatedRecipe).get();
+	public ResponseEntity<?> updateRecipe(@PathVariable(name = "id", required = true) String identifier,
+			@RequestBody RecipeDto updatedRecipe) {
+		return service.updateRecipe(identifier, updatedRecipe).get();
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteRecipe(@PathVariable(name = "id", required = true) String recipeId) {
-		return service.deleteRecipe(recipeId).get();
+	public ResponseEntity<?> deleteRecipe(@PathVariable(name = "id", required = true) String identifier) {
+		return service.deleteRecipe(identifier).get();
 	}
 
 	@GetMapping("/filters")
