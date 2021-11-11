@@ -32,7 +32,7 @@ public class Recipe {
 	@Column(columnDefinition = "text")
 	private String preparation;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH })
 	@JoinTable(name = "recipe_tags", joinColumns = @JoinColumn(name = "recipe_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
 	private Set<Tag> tags;
 

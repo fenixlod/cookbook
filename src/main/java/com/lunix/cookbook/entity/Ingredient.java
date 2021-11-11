@@ -19,11 +19,11 @@ public class Ingredient {
 	@GeneratedValue(generator = "ingredient_generator")
 	private Long id;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "recipe_id")
 	private Recipe recipe;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH })
 	@JoinColumn(name = "product_id")
 	private Product product;
 

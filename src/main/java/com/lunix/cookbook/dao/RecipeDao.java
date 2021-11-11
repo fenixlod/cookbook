@@ -56,7 +56,6 @@ public class RecipeDao {
 	}
 
 	public void delete(Recipe recipeToDelete) {
-		// TODO Fix me! Deleteing is cascaded!!
 		recipeRepo.delete(recipeToDelete);
 	}
 
