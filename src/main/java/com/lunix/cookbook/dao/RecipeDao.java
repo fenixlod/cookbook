@@ -1,6 +1,7 @@
 package com.lunix.cookbook.dao;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -40,6 +41,13 @@ public class RecipeDao {
 		newRecipe.setTags(tagDao.findTags(newRecipe.getTags()));
 		newRecipe.setIngredients(productDao.findIngredientProducts(newRecipe.getIngredients()));
 		newRecipe.setIdentifier(UUID.randomUUID().toString());
+		newRecipe.getIngredients().forEach(i -> i.setRecipe(newRecipe));
+		newRecipe.getTags().forEach(t -> {
+			if (t.getRecipes() == null)
+				t.setRecipes(Arrays.asList(newRecipe));
+			else
+				t.getRecipes().add(newRecipe);
+		});
 		return recipeRepo.save(newRecipe);
 	}
 
