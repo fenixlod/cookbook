@@ -24,31 +24,11 @@ public class OperationResult {
 		return new OperationResult(resultObject, HttpStatus.OK);
 	}
 
-	static public OperationResult invalid(String resultMessage) {
-		return invalid(new ResponseMessage(resultMessage));
-	}
-
-	static public OperationResult invalid(Object resultObject) {
-		return new OperationResult(resultObject, HttpStatus.BAD_REQUEST);
-	}
-
-	static public OperationResult error(String resultMessage) {
-		return error(new ResponseMessage(resultMessage));
-	}
-
-	static public OperationResult error(Object resultObject) {
-		return new OperationResult(resultObject, HttpStatus.INTERNAL_SERVER_ERROR);
-	}
-
 	static public OperationResult accepted() {
 		return new OperationResult(null, HttpStatus.ACCEPTED);
 	}
 
 	static public OperationResult created(Object resultObject) {
 		return new OperationResult(resultObject, HttpStatus.CREATED);
-	}
-
-	static public OperationResult notFound(String resultMessage) {
-		return new OperationResult(new ResponseMessage(resultMessage), HttpStatus.NOT_FOUND);
 	}
 }

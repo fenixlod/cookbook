@@ -1,13 +1,22 @@
 package com.lunix.cookbook.dto;
 
 import java.util.List;
+import java.util.Set;
+
+import javax.validation.constraints.NotBlank;
+
+import com.lunix.cookbook.utility.UniqueProducts;
 
 public class RecipeDto {
 	private String id;
+
+	@NotBlank(message = "Име на рецептата е задължително поле")
 	private String name;
 	private String description;
 	private String preparation;
-	private List<String> tags;
+	private Set<String> tags;
+
+	@UniqueProducts(message = "Рецептата съдържа дублиращи се продукти")
 	private List<IngredientDto> ingredients;
 
 	public String getId() {
@@ -42,11 +51,11 @@ public class RecipeDto {
 		this.preparation = preparation;
 	}
 
-	public List<String> getTags() {
+	public Set<String> getTags() {
 		return tags;
 	}
 
-	public void setTags(List<String> tags) {
+	public void setTags(Set<String> tags) {
 		this.tags = tags;
 	}
 

@@ -42,7 +42,7 @@ public class RecipeConverter {
 		dto.setId(entity.getIdentifier());
 		dto.setName(entity.getName());
 		dto.setPreparation(entity.getPreparation());
-		dto.setTags(entity.getTags().stream().map(t -> t.getValue()).collect(Collectors.toList()));
+		dto.setTags(entity.getTags().stream().map(t -> t.getValue()).collect(Collectors.toSet()));
 		dto.setIngredients(entity.getIngredients().stream().map(i -> {
 			IngredientDto ingredient = new IngredientDto();
 			ingredient.setAmount(i.getAmount());
