@@ -14,12 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.lunix.cookbook.dao.RecipeDao;
-import com.lunix.cookbook.dto.RecipeDto;
 import com.lunix.cookbook.entity.Recipe;
-import com.lunix.cookbook.object.OperationResult;
 import com.lunix.cookbook.object.RecipeFilterCounts;
 import com.lunix.cookbook.object.RecipeSearchFilter;
-import com.lunix.cookbook.utility.RecipeConverter;
 
 @Service
 public class RecipeService {
@@ -29,28 +26,26 @@ public class RecipeService {
 		this.recipeDao = dao;
 	}
 
-	public OperationResult createRecipe(RecipeDto newRecipe) throws ResponseStatusException {
+	public Recipe createRecipe(Recipe newRecipe) throws ResponseStatusException {
 		if (recipeDao.getByName(newRecipe.getName()).isPresent())
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Рецепта с това име вече съществува");
 
-		Recipe createdRecipe = recipeDao.createNew(RecipeConverter.toEntity(newRecipe));
-		return OperationResult.created(RecipeConverter.toDto(createdRecipe));
+		return recipeDao.createNew(newRecipe);
 	}
 
-	public OperationResult listRecipes(RecipeSearchFilter searchParameters) {
-		List<Recipe> foundRecipes = recipeDao.findBy(searchParameters);
-		return OperationResult.ok(foundRecipes.stream().map(RecipeConverter::toDto).collect(Collectors.toList()));
+	public List<Recipe> listRecipes(RecipeSearchFilter searchParameters) {
+		return recipeDao.findBy(searchParameters);
 	}
 
-	public OperationResult getRecipe(String identifier) throws ResponseStatusException {
+	public Recipe getRecipe(String identifier) throws ResponseStatusException {
 		Optional<Recipe> recipe = recipeDao.getByIdentifier(identifier);
 		if (recipe.isEmpty())
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Рецептата не е открита");
 
-		return OperationResult.ok(RecipeConverter.toDto(recipe.get()));
+		return recipe.get();
 	}
 
-	public OperationResult updateRecipe(String identifier, RecipeDto updatedRecipe) throws ResponseStatusException {
+	public Recipe updateRecipe(String identifier, Recipe updatedRecipe) throws ResponseStatusException {
 		Optional<Recipe> oldRecipe = recipeDao.getByIdentifier(identifier);
 		if (oldRecipe.isEmpty())
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Рецептата не е открита");
@@ -61,20 +56,18 @@ public class RecipeService {
 				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Рецепта с това име вече съществува");
 		}
 
-		Recipe entity = recipeDao.update(oldRecipe.get(), RecipeConverter.toEntity(updatedRecipe));
-		return OperationResult.created(RecipeConverter.toDto(entity));
+		return recipeDao.update(oldRecipe.get(), updatedRecipe);
 	}
 
-	public OperationResult deleteRecipe(String identifier) throws ResponseStatusException {
+	public void deleteRecipe(String identifier) throws ResponseStatusException {
 		Optional<Recipe> recipe = recipeDao.getByIdentifier(identifier);
 		if (recipe.isEmpty())
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Рецептата не е открита");
 
 		recipeDao.delete(recipe.get());
-		return OperationResult.accepted();
 	}
 
-	public OperationResult getRecipeFilters() {
+	public RecipeFilterCounts getRecipeFilters() {
 		RecipeFilterCounts recipeFilters = new RecipeFilterCounts();
 		List<Recipe> allRecipes = recipeDao.getAll();
 
@@ -93,7 +86,6 @@ public class RecipeService {
 
 		recipeFilters.setTags(sortedTags);
 		recipeFilters.setIngredients(sortedIngredients);
-		return OperationResult.ok(recipeFilters);
-
+		return recipeFilters;
 	}
 }

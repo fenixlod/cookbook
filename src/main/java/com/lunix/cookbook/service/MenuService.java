@@ -14,7 +14,6 @@ import com.lunix.cookbook.object.MealRequirement;
 import com.lunix.cookbook.object.MenuDefinition;
 import com.lunix.cookbook.object.MenuMeal;
 import com.lunix.cookbook.object.MenuResult;
-import com.lunix.cookbook.object.OperationResult;
 import com.lunix.cookbook.object.RecipeSearchFilter;
 
 @Service
@@ -25,7 +24,7 @@ public class MenuService {
 		this.recipeDao = dao;
 	}
 
-	public OperationResult generateMenu(MenuDefinition menuDefinition) {
+	public List<MenuResult> generateMenu(MenuDefinition menuDefinition) {
 		List<MenuResult> results = new ArrayList<>();
 		int countSuggestions = menuDefinition.getSettings().getSuggestions();
 		for (MenuMeal meal : menuDefinition.getMeals()) {
@@ -49,7 +48,7 @@ public class MenuService {
 			results.add(result);
 		}
 
-		return OperationResult.ok(results);
+		return results;
 	}
 
 	private Filters transformToFilter(MealRequirement requirement) {
